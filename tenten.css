@@ -1,0 +1,39 @@
+.tentenFieldRow {
+    display: flex;
+}
+
+.tentenFieldBlock {
+    border-radius: 5px;
+    width: 40px;
+    height: 40px;
+    margin: 1px;
+}
+
+.tentenField {
+    margin: 10px;
+}
+
+.tentenField  .tentenEmptyBlock {
+    background-color: #CFCFCF;
+    border: 1px solid #CFCFCF;
+}
+
+.tentenFilledBlock {
+    background-color: #FF8271;
+    border: 1px solid #FF8271;
+}
+
+.tentenCandidate {
+    transition: transform 0.2s ease-in-out;
+    transform: scale(0.5);
+    display: inline-block;
+    cursor: move;
+}
+
+.tentenCandidate:hover {
+    transform: scale(1);
+}
+
+.tentenDragging {
+    pointer-events: none;
+}
