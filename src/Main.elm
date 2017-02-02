@@ -330,15 +330,6 @@ blockToMatrix block =
                             ]
                         )
 
-                LongestDash ->
-                    Matrix.create
-                        5
-                        1
-                        (shapeToMatrixInitializer
-                            LongestDash
-                            [ List.repeat 5 True ]
-                        )
-
                 SmallL ->
                     Matrix.create
                         2
@@ -351,62 +342,25 @@ blockToMatrix block =
                         )
 
                 BigBox ->
-                    Matrix.create
-                        3
-                        3
-                        (shapeToMatrixInitializer
-                            BigBox
-                            (List.repeat 3 True
-                                |> List.repeat 3
-                            )
-                        )
+                    Matrix.constant 3 3 <| Just BigBox
 
                 SmallBox ->
-                    Matrix.create
-                        2
-                        2
-                        (shapeToMatrixInitializer
-                            SmallBox
-                            (List.repeat 2 True
-                                |> List.repeat 2
-                            )
-                        )
+                    Matrix.constant 2 2 <| Just SmallBox
 
                 Dot ->
-                    Matrix.create
-                        1
-                        1
-                        (shapeToMatrixInitializer
-                            Dot
-                            [ [ True ] ]
-                        )
+                    Matrix.constant 1 1 <| Just Dot
 
                 Dash ->
-                    Matrix.create
-                        2
-                        1
-                        (shapeToMatrixInitializer
-                            Dash
-                            [ List.repeat 2 True ]
-                        )
+                    Matrix.constant 2 1 <| Just Dash
 
                 LongDash ->
-                    Matrix.create
-                        3
-                        1
-                        (shapeToMatrixInitializer
-                            LongDash
-                            [ List.repeat 3 True ]
-                        )
+                    Matrix.constant 3 1 <| Just LongDash
 
                 LongerDash ->
-                    Matrix.create
-                        4
-                        1
-                        (shapeToMatrixInitializer
-                            LongerDash
-                            [ List.repeat 4 True ]
-                        )
+                    Matrix.constant 4 1 <| Just LongerDash
+
+                LongestDash ->
+                    Matrix.constant 5 1 <| Just LongestDash
     in
         applyTransformation block.transformations myMatrix
 
@@ -444,7 +398,7 @@ getDelta from to =
 
 emptyField : Int -> Int -> Field
 emptyField width height =
-    Field (Matrix.create width height (always <| always Nothing)) Nothing
+    Field (Matrix.constant width height Nothing) Nothing
 
 
 
@@ -518,13 +472,8 @@ handleDragAction dragMsg model =
         DragAt block position ->
             let
                 updateDrag : Maybe Drag -> Maybe Drag
-                updateDrag maybeDrag =
-                    case maybeDrag of
-                        Nothing ->
-                            Nothing
-
-                        Just drag ->
-                            Just { drag | current = position }
+                updateDrag =
+                    Maybe.map (\drag -> { drag | current = position })
 
                 newBlocks =
                     replaceBlock

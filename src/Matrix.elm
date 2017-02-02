@@ -8,7 +8,7 @@ module Matrix
         , column
         , map
         , toList
-        , mapPosition
+        , indexedMap
         , flipHorizontal
         , flipVertical
         , Dimension
@@ -17,21 +17,33 @@ module Matrix
         , foldl
         , rotate
         , transpose
+        , constant
         )
 
 {-| Datastructure for managing rectangular data.
 
+
+# Structures
+The major structures that are used throughout the Matrix module.
+
+As noted, Matrix currently is not an opaque type, but rather is exposing its
+internal data structure as an `Array ( Array a )`. For now, this makes it
+easier to do advanced operations on the contents, until a proper internal type
+is foreseen.
+@docs Matrix, Dimension
+
 # Creation
-@docs empty, create
+@docs empty, create, constant
 
 # Inspection
 @docs get, row, column, dimension, toList
 
-# Manipulation
-@docs map, flipHorizontal, flipVertical, mapPosition, overlayMaybe, foldl, rotate
+# Transformation
+@docs map, indexedMap, overlayMaybe, foldl
 
-# Structures
-@docs Matrix, Dimension
+# Manipulation
+@docs rotate, transpose, flipHorizontal, flipVertical
+
 -}
 
 import Array exposing (Array)
@@ -54,6 +66,22 @@ type alias Dimension =
 
 
 {-| Returns a Dimension for a Matrix.
+
+```
+Matrix.empty
+    |> Matrix.dimension
+    == Dimension { width = 0, height =  0}
+
+
+aMatrix : Matrix Int
+aMatrix =
+    Matrix.constant 10 15 1
+
+
+aMatrix
+    |> Matrix.dimension
+    == Dimension { width = 10, height = 15 }
+```
 -}
 dimension : Matrix a -> Dimension
 dimension aMatrix =
@@ -71,7 +99,7 @@ dimension aMatrix =
 matrix of Maybe's at a certain offset. Ensures that a `Nothing` in the overlay
 won't mask a Just in the base layer.
 
-This is implemented in terms of a `mapPosition`.
+This is implemented in terms of an `indexedMap`.
 
 ```
 gridHelper : Int -> Int -> Maybe Int
@@ -100,7 +128,7 @@ doOverlay =
 -}
 overlayMaybe : Matrix (Maybe a) -> Int -> Int -> Matrix (Maybe a) -> Matrix (Maybe a)
 overlayMaybe over offsetX offsetY on =
-    mapPosition
+    indexedMap
         (\x y original ->
             case get (y - offsetY) (x - offsetX) over |> Maybe.Extra.join of
                 Nothing ->
@@ -113,6 +141,10 @@ overlayMaybe over offsetX offsetY on =
 
 
 {-| Create an empty, zero-dimension matrix.
+
+```
+Matrix.toList Matrix.empty == []
+```
 -}
 empty : Matrix a
 empty =
@@ -122,6 +154,24 @@ empty =
 {-| Create a matrix with the given width and height, and initializes the values
 using the initialization helper provided which turns an x y position into a
 value.
+
+```
+aMatrix : Matrix Int
+aMatrix =
+    let
+        width = 3
+        height = 2
+    in
+        Matrix.create
+            width
+            height
+            (\x y -> x + y * width)
+
+aMatrix |> Matrix.toList ==
+    [ [ 1, 2, 3 ]
+    , [ 4, 5, 6]
+    ]
+```
 -}
 create : Int -> Int -> (Int -> Int -> a) -> Matrix a
 create width height initialValue =
@@ -132,8 +182,54 @@ create width height initialValue =
         Array.initialize height initRow
 
 
-{-| Returns the values of a specified row as a Maybe (List). If the rownumber
-is out of bounds, this returns Nothing, else Just [..].
+{-| Create a matrix with the given with and height, with each field initialized
+as a constant value.
+
+```
+aConstantMatrix : Matrix Int
+aConstantMatrix =
+    Matrix.constant 3 2 1
+
+Matrix.toList aConstantMatrix ==
+    [ [ 1, 1, 1 ]
+    , [ 1, 1, 1 ]
+    ]
+```
+-}
+constant : Int -> Int -> a -> Matrix a
+constant width height initialValue =
+    let
+        row =
+            Array.initialize width (always initialValue)
+    in
+        Array.initialize height (always row)
+
+
+{-| Returns the values of a specified row as a `Maybe (List a)`. If the
+rownumber is out of bounds, this returns `Nothing`, else `Just [..]`.
+
+```
+-- Building upon the example from `create`
+aMatrix : Matrix Int
+aMatrix =
+    let
+        width = 3
+        height = 2
+    in
+        Matrix.create
+            width
+            height
+            (\x y -> x + y * width)
+
+aMatrix |> Matrix.toList ==
+    [ [ 1, 2, 3 ]
+    , [ 4, 5, 6]
+    ]
+
+-- Getting rows is rather easy
+aMatrix |> Matrix.row 0 == Just [ 1, 2, 3 ]
+aMatrix |> Matrix.row 2 == Nothing -- Out of bounds!
+```
 -}
 row : Int -> Matrix a -> Maybe (List a)
 row y matrix =
@@ -141,8 +237,31 @@ row y matrix =
         |> Maybe.map Array.toList
 
 
-{-| Return the values of a specified column as a Maybe (List). If the
-columnnumber is out of bounds, this returns Nothing, else Just [..].
+{-| Return the values of a specified column as a `Maybe (List a)`. If the
+columnnumber is out of bounds, this returns `Nothing`, else `Just [..]`.
+
+```
+-- Building upon the example from `create`
+aMatrix : Matrix Int
+aMatrix =
+    let
+        width = 3
+        height = 2
+    in
+        Matrix.create
+            width
+            height
+            (\x y -> x + y * width)
+
+aMatrix |> Matrix.toList ==
+    [ [ 1, 2, 3 ]
+    , [ 4, 5, 6]
+    ]
+
+-- Getting rows is rather easy
+aMatrix |> Matrix.column 0 == Just [ 1, 4 ]
+aMatrix |> Matrix.column 3 == Nothing -- Out of bounds!
+```
 -}
 column : Int -> Matrix a -> Maybe (List a)
 column x matrix =
@@ -153,6 +272,30 @@ column x matrix =
 
 {-| Get the value at the specified coordinates in a Matrix. If the location is
 out of bounds, this will yield Nothing.
+
+```
+-- Building upon the example from `create`
+aMatrix : Matrix Int
+aMatrix =
+    let
+        width = 3
+        height = 2
+    in
+        Matrix.create
+            width
+            height
+            (\x y -> x + y * width)
+
+aMatrix |> Matrix.toList ==
+    [ [ 1, 2, 3 ]
+    , [ 4, 5, 6]
+    ]
+
+
+Matrix.get 0 0 aMatrix == Just 1
+Matrix.get 1 1 aMatrix == Just 5
+Matrix.get 0 2 aMatrix == Nothing -- Out of bounds..
+```
 -}
 get : Int -> Int -> Matrix a -> Maybe a
 get y x matrix =
@@ -173,11 +316,31 @@ unsafeGet y x matrix =
             val
 
 
-{-| Essentially an indexedMap where the operator is given an x and y coordinate
-as well as the current value.
+{-| An indexedMap where the operator is given an x and y coordinate as well as
+the current value.
+
+```
+aMatrix : Matrix Int
+aMatrix =
+    Matrix.create 3 2 (\x y -> x + y * 3)
+
+
+aMatrix |> Matrix.toList ==
+    [ [ 1, 2, 3 ]
+    , [ 4, 5, 6]
+    ]
+
+
+aMatrix
+    |> Matrix.indexedMap (\x y val -> val % 2 == 0)
+    |> Matrix.toList ==
+    [ [ False, True, False ]
+    , [ True, False, True ]
+    ]
+```
 -}
-mapPosition : (Int -> Int -> a -> b) -> Matrix a -> Matrix b
-mapPosition operator aMatrix =
+indexedMap : (Int -> Int -> a -> b) -> Matrix a -> Matrix b
+indexedMap operator aMatrix =
     aMatrix
         |> Array.indexedMap
             (\y row ->
@@ -188,6 +351,27 @@ mapPosition operator aMatrix =
 
 
 {-| Map an operator over a Matrix.
+
+```
+aMatrix : Matrix Int
+aMatrix =
+    Matrix.constant 3 2 1
+        |>
+
+
+aMatrix |> Matrix.toList ==
+        [ [ 1, 1, 1 ]
+        , [ 1, 1, 1 ]
+        ]
+
+-- Multiply every entry by 2
+aMatrix
+    |> Matrix.map ((*) 2)
+    |> Matrix.toList ==
+    [ [ 2, 2, 2 ]
+    , [ 2, 2, 2]
+    ]
+```
 -}
 map : (a -> b) -> Matrix a -> Matrix b
 map operator matrix =
@@ -207,6 +391,18 @@ foldl accumulator initial matrix =
 
 {-| Turns a Matrix into a list of lists. Outer lists are rows, inner lists are
 columns.
+
+```
+-- A special case, the empty matrix with dimension 0 0
+Matrix.empty |> Matrix.toList == []
+
+-- A normal matrix
+Matrix.constant 3 2 1
+    |> Matrix.toList ==
+    [ [ 1, 1, 1 ]
+    , [ 1, 1, 1 ]
+    ]
+```
 -}
 toList : Matrix a -> List (List a)
 toList matrix =
@@ -285,6 +481,26 @@ flipVertical =
     reverseArray
 
 
+{-| Transpose a Matrix, i.e. exchanging rows for columns and columns for rows.
+
+```
+aMatrix : Matrix Int
+aMatrix =
+    Matrix.create 2 3 (\x y -> x + y * 2)
+
+aMatrix |> Matrix.toList ==
+    [ [ 1, 2 ]
+    , [ 3, 4 ]
+    , [ 5, 6 ]
+    ]
+
+
+Matrix.transpose aMatrix |> Matrix.toList ==
+    [ [ 1, 3, 5 ]
+    , [ 2, 4, 6 ]
+    ]
+```
+-}
 transpose : Matrix a -> Matrix a
 transpose aMatrix =
     let
