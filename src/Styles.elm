@@ -32,6 +32,7 @@ type CssClass
     | Wrapper
     | Score
     | CandidateList
+    | GameOver
 
 
 
@@ -52,7 +53,21 @@ css =
             ]
         , class Wrapper
             [ margin2 (px 0) auto
+            , marginTop (px 20)
             , width (px 440)
+            ]
+        , class GameOver
+            [ displayFlex
+            , alignItems center
+            , justifyContent center
+            , position absolute
+            , width (pct 100)
+            , height (pct 100)
+            , top (px 0)
+            , left (px 0)
+            , fontFamilies [ "Luckiest Guy" ]
+            , fontSize (em 3)
+            , backgroundColor (rgba 30 30 30 0.3)
             ]
         , class CandidateList
             [ displayFlex

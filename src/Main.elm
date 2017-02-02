@@ -74,7 +74,13 @@ type alias Model =
     , field : Field
     , seed : Random.Seed
     , next : List (Maybe Block)
+    , phase : Phase
     }
+
+
+type Phase
+    = Playing
+    | GameOver
 
 
 init : Flags -> ( Model, List (Cmd Msg) )
@@ -83,6 +89,7 @@ init flags =
     , field = emptyField fieldWidth fieldHeight
     , seed = Random.initialSeed flags
     , next = []
+    , phase = Playing
     }
         |> generateCandidates
         => []
@@ -569,6 +576,7 @@ handleDragAction dragMsg model =
                     , score = model.score + scoreD
                 }
                     |> generateCandidates
+                    |> updateGamePhase
                     => []
 
 
@@ -669,6 +677,52 @@ listsToPairs firstList secondList =
             List.map (\s -> ( f, s )) secondList
         )
         firstList
+
+
+pairToPosition : ( Int, Int ) -> Position
+pairToPosition ( x, y ) =
+    { x = x, y = y }
+
+
+updateGamePhase : Model -> Model
+updateGamePhase model =
+    let
+        hasPossibleMoves : Bool
+        hasPossibleMoves =
+            model.next
+                |> Maybe.Extra.values
+                |> List.map blockToMatrix
+                |> List.any (canFitAnywhere model.field.blocks)
+    in
+        case hasPossibleMoves of
+            True ->
+                log "some moves left" model
+
+            False ->
+                { model | phase = GameOver }
+                    |> log "no moves left, game over!"
+
+
+canFitAnywhere : Matrix (Maybe a) -> Matrix (Maybe a) -> Bool
+canFitAnywhere baseMatrix overlay =
+    let
+        baseDims : Matrix.Dimension
+        baseDims =
+            Matrix.dimension baseMatrix
+
+        overlayDims : Matrix.Dimension
+        overlayDims =
+            Matrix.dimension overlay
+
+        occupationPredicate : Position -> Bool
+        occupationPredicate =
+            isUnoccupied baseMatrix overlay
+    in
+        listsToPairs
+            (List.range 0 <| baseDims.width - overlayDims.width)
+            (List.range 0 <| baseDims.height - overlayDims.height)
+            |> List.map pairToPosition
+            |> List.any occupationPredicate
 
 
 isUnoccupied : Matrix (Maybe a) -> Matrix (Maybe a) -> Position -> Bool
@@ -791,17 +845,33 @@ subscriptions model =
 -- View
 
 
+{ id, class, classList } =
+    Html.CssHelpers.withNamespace "tenten"
+
+
 view : Model -> Html Msg
 view model =
     div [ class [ Styles.Wrapper ] ]
         [ div [ class [ Styles.Score ] ] [ text <| toString model.score ]
         , renderField model.field
         , renderNext model.next
+        , renderPhase model.phase
         ]
 
 
-{ id, class, classList } =
-    Html.CssHelpers.withNamespace "tenten"
+renderPhase : Phase -> Html Msg
+renderPhase phase =
+    case phase of
+        GameOver ->
+            renderGameOver
+
+        _ ->
+            text ""
+
+
+renderGameOver : Html Msg
+renderGameOver =
+    div [ class [ Styles.GameOver ] ] [ text "Game Over!" ]
 
 
 renderNext : List (Maybe Block) -> Html Msg
