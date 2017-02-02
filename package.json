@@ -8,6 +8,8 @@
     "scripts": {
         "build": "elm make src/Main.elm --output=tenten.js",
         "watch": "chokidar '**/*.elm' -c 'yarn build' --initial",
-        "css": "elm-css src/Stylesheets.elm"
+        "css": "elm-css src/Stylesheets.elm",
+        "docs": "elm-doc . --output docs",
+        "open-docs": "(cd docs && spark)"
     }
 }

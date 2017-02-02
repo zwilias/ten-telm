@@ -4210,627 +4210,6 @@ var _elm_lang$core$Array$repeat = F2(
 	});
 var _elm_lang$core$Array$Array = {ctor: 'Array'};
 
-var _elm_community$array_extra$Array_Extra$splitAt = F2(
-	function (index, xs) {
-		var len = _elm_lang$core$Array$length(xs);
-		var _p0 = {
-			ctor: '_Tuple2',
-			_0: _elm_lang$core$Native_Utils.cmp(index, 0) > 0,
-			_1: _elm_lang$core$Native_Utils.cmp(index, len) < 0
-		};
-		if (_p0._0 === true) {
-			if (_p0._1 === true) {
-				return {
-					ctor: '_Tuple2',
-					_0: A3(_elm_lang$core$Array$slice, 0, index, xs),
-					_1: A3(_elm_lang$core$Array$slice, index, len, xs)
-				};
-			} else {
-				return {ctor: '_Tuple2', _0: xs, _1: _elm_lang$core$Array$empty};
-			}
-		} else {
-			if (_p0._1 === true) {
-				return {ctor: '_Tuple2', _0: _elm_lang$core$Array$empty, _1: xs};
-			} else {
-				return {ctor: '_Tuple2', _0: _elm_lang$core$Array$empty, _1: _elm_lang$core$Array$empty};
-			}
-		}
-	});
-var _elm_community$array_extra$Array_Extra$removeAt = F2(
-	function (index, xs) {
-		var _p1 = A2(_elm_community$array_extra$Array_Extra$splitAt, index, xs);
-		var xs0 = _p1._0;
-		var xs1 = _p1._1;
-		var len1 = _elm_lang$core$Array$length(xs1);
-		return _elm_lang$core$Native_Utils.eq(len1, 0) ? xs0 : A2(
-			_elm_lang$core$Array$append,
-			xs0,
-			A3(_elm_lang$core$Array$slice, 1, len1, xs1));
-	});
-var _elm_community$array_extra$Array_Extra$resizerIndexed = F3(
-	function (n, f, xs) {
-		var gen = F2(
-			function (m, g) {
-				return A2(
-					_elm_lang$core$Array$indexedMap,
-					F2(
-						function (i, _p2) {
-							return g(i);
-						}),
-					A2(
-						_elm_lang$core$Array$repeat,
-						m,
-						{ctor: '_Tuple0'}));
-			});
-		var l = _elm_lang$core$Array$length(xs);
-		return (_elm_lang$core$Native_Utils.cmp(l, n) > 0) ? A3(_elm_lang$core$Array$slice, l - n, l, xs) : ((_elm_lang$core$Native_Utils.cmp(l, n) < 0) ? A2(
-			_elm_lang$core$Array$append,
-			A2(gen, n - l, f),
-			xs) : xs);
-	});
-var _elm_community$array_extra$Array_Extra$resizelIndexed = F3(
-	function (n, f, xs) {
-		var gen = F2(
-			function (m, g) {
-				return A2(
-					_elm_lang$core$Array$indexedMap,
-					F2(
-						function (i, _p3) {
-							return g(i);
-						}),
-					A2(
-						_elm_lang$core$Array$repeat,
-						m,
-						{ctor: '_Tuple0'}));
-			});
-		var l = _elm_lang$core$Array$length(xs);
-		return (_elm_lang$core$Native_Utils.cmp(l, n) > 0) ? A3(_elm_lang$core$Array$slice, 0, n, xs) : ((_elm_lang$core$Native_Utils.cmp(l, n) < 0) ? A2(
-			_elm_lang$core$Array$append,
-			xs,
-			A2(
-				gen,
-				n - l,
-				function (_p4) {
-					return f(
-						function (i) {
-							return i + l;
-						}(_p4));
-				})) : xs);
-	});
-var _elm_community$array_extra$Array_Extra$resizerRepeat = F3(
-	function (n, val, xs) {
-		var l = _elm_lang$core$Array$length(xs);
-		return (_elm_lang$core$Native_Utils.cmp(l, n) > 0) ? A3(_elm_lang$core$Array$slice, l - n, l, xs) : ((_elm_lang$core$Native_Utils.cmp(l, n) < 0) ? A2(
-			_elm_lang$core$Array$append,
-			A2(_elm_lang$core$Array$repeat, n - l, val),
-			xs) : xs);
-	});
-var _elm_community$array_extra$Array_Extra$resizelRepeat = F3(
-	function (n, val, xs) {
-		var l = _elm_lang$core$Array$length(xs);
-		return (_elm_lang$core$Native_Utils.cmp(l, n) > 0) ? A3(_elm_lang$core$Array$slice, 0, n, xs) : ((_elm_lang$core$Native_Utils.cmp(l, n) < 0) ? A2(
-			_elm_lang$core$Array$append,
-			xs,
-			A2(_elm_lang$core$Array$repeat, n - l, val)) : xs);
-	});
-var _elm_community$array_extra$Array_Extra$removeWhen = F2(
-	function (pred, xs) {
-		return A2(
-			_elm_lang$core$Array$filter,
-			function (_p5) {
-				return !pred(_p5);
-			},
-			xs);
-	});
-var _elm_community$array_extra$Array_Extra$filterMap = F2(
-	function (f, xs) {
-		var maybePush = F3(
-			function (f, mx, xs) {
-				var _p6 = f(mx);
-				if (_p6.ctor === 'Just') {
-					return A2(_elm_lang$core$Array$push, _p6._0, xs);
-				} else {
-					return xs;
-				}
-			});
-		return A3(
-			_elm_lang$core$Array$foldl,
-			maybePush(f),
-			_elm_lang$core$Array$empty,
-			xs);
-	});
-var _elm_community$array_extra$Array_Extra$getUnsafe = F2(
-	function (n, xs) {
-		var _p7 = A2(_elm_lang$core$Array$get, n, xs);
-		if (_p7.ctor === 'Just') {
-			return _p7._0;
-		} else {
-			return _elm_lang$core$Native_Utils.crashCase(
-				'Array.Extra',
-				{
-					start: {line: 73, column: 5},
-					end: {line: 78, column: 125}
-				},
-				_p7)(
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					'Index ',
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						_elm_lang$core$Basics$toString(n),
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							' of Array with length ',
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								_elm_lang$core$Basics$toString(
-									_elm_lang$core$Array$length(xs)),
-								' is not reachable.')))));
-		}
-	});
-var _elm_community$array_extra$Array_Extra$apply = F2(
-	function (fs, xs) {
-		var l = A2(
-			_elm_lang$core$Basics$min,
-			_elm_lang$core$Array$length(fs),
-			_elm_lang$core$Array$length(xs));
-		var fs_ = A3(_elm_lang$core$Array$slice, 0, l, fs);
-		return A2(
-			_elm_lang$core$Array$indexedMap,
-			F2(
-				function (n, f) {
-					return f(
-						A2(_elm_community$array_extra$Array_Extra$getUnsafe, n, xs));
-				}),
-			fs_);
-	});
-var _elm_community$array_extra$Array_Extra$map2 = F2(
-	function (f, ws) {
-		return _elm_community$array_extra$Array_Extra$apply(
-			A2(_elm_lang$core$Array$map, f, ws));
-	});
-var _elm_community$array_extra$Array_Extra$zip = _elm_community$array_extra$Array_Extra$map2(
-	F2(
-		function (v0, v1) {
-			return {ctor: '_Tuple2', _0: v0, _1: v1};
-		}));
-var _elm_community$array_extra$Array_Extra$map3 = F3(
-	function (f, ws, xs) {
-		return _elm_community$array_extra$Array_Extra$apply(
-			A3(_elm_community$array_extra$Array_Extra$map2, f, ws, xs));
-	});
-var _elm_community$array_extra$Array_Extra$zip3 = _elm_community$array_extra$Array_Extra$map3(
-	F3(
-		function (v0, v1, v2) {
-			return {ctor: '_Tuple3', _0: v0, _1: v1, _2: v2};
-		}));
-var _elm_community$array_extra$Array_Extra$map4 = F4(
-	function (f, ws, xs, ys) {
-		return _elm_community$array_extra$Array_Extra$apply(
-			A4(_elm_community$array_extra$Array_Extra$map3, f, ws, xs, ys));
-	});
-var _elm_community$array_extra$Array_Extra$zip4 = _elm_community$array_extra$Array_Extra$map4(
-	F4(
-		function (v0, v1, v2, v3) {
-			return {ctor: '_Tuple4', _0: v0, _1: v1, _2: v2, _3: v3};
-		}));
-var _elm_community$array_extra$Array_Extra$map5 = F5(
-	function (f, ws, xs, ys, zs) {
-		return _elm_community$array_extra$Array_Extra$apply(
-			A5(_elm_community$array_extra$Array_Extra$map4, f, ws, xs, ys, zs));
-	});
-var _elm_community$array_extra$Array_Extra$zip5 = _elm_community$array_extra$Array_Extra$map5(
-	F5(
-		function (v0, v1, v2, v3, v4) {
-			return {ctor: '_Tuple5', _0: v0, _1: v1, _2: v2, _3: v3, _4: v4};
-		}));
-var _elm_community$array_extra$Array_Extra$sliceUntil = F2(
-	function (n, a) {
-		return (_elm_lang$core$Native_Utils.cmp(n, 0) > -1) ? A3(_elm_lang$core$Array$slice, 0, n, a) : A3(
-			_elm_lang$core$Array$slice,
-			0,
-			_elm_lang$core$Array$length(a) + n,
-			a);
-	});
-var _elm_community$array_extra$Array_Extra$sliceFrom = F2(
-	function (n, a) {
-		return A3(
-			_elm_lang$core$Array$slice,
-			n,
-			_elm_lang$core$Array$length(a),
-			a);
-	});
-var _elm_community$array_extra$Array_Extra$update = F3(
-	function (n, f, a) {
-		var element = A2(_elm_lang$core$Array$get, n, a);
-		var _p9 = element;
-		if (_p9.ctor === 'Nothing') {
-			return a;
-		} else {
-			return A3(
-				_elm_lang$core$Array$set,
-				n,
-				f(_p9._0),
-				a);
-		}
-	});
-
-var _elm_community$maybe_extra$Maybe_Extra$foldrValues = F2(
-	function (item, list) {
-		var _p0 = item;
-		if (_p0.ctor === 'Nothing') {
-			return list;
-		} else {
-			return {ctor: '::', _0: _p0._0, _1: list};
-		}
-	});
-var _elm_community$maybe_extra$Maybe_Extra$values = A2(
-	_elm_lang$core$List$foldr,
-	_elm_community$maybe_extra$Maybe_Extra$foldrValues,
-	{ctor: '[]'});
-var _elm_community$maybe_extra$Maybe_Extra$filter = F2(
-	function (f, m) {
-		var _p1 = A2(_elm_lang$core$Maybe$map, f, m);
-		if ((_p1.ctor === 'Just') && (_p1._0 === true)) {
-			return m;
-		} else {
-			return _elm_lang$core$Maybe$Nothing;
-		}
-	});
-var _elm_community$maybe_extra$Maybe_Extra$traverseArray = function (f) {
-	var step = F2(
-		function (e, acc) {
-			var _p2 = f(e);
-			if (_p2.ctor === 'Nothing') {
-				return _elm_lang$core$Maybe$Nothing;
-			} else {
-				return A2(
-					_elm_lang$core$Maybe$map,
-					_elm_lang$core$Array$push(_p2._0),
-					acc);
-			}
-		});
-	return A2(
-		_elm_lang$core$Array$foldl,
-		step,
-		_elm_lang$core$Maybe$Just(_elm_lang$core$Array$empty));
-};
-var _elm_community$maybe_extra$Maybe_Extra$combineArray = _elm_community$maybe_extra$Maybe_Extra$traverseArray(_elm_lang$core$Basics$identity);
-var _elm_community$maybe_extra$Maybe_Extra$traverse = function (f) {
-	var step = F2(
-		function (e, acc) {
-			var _p3 = f(e);
-			if (_p3.ctor === 'Nothing') {
-				return _elm_lang$core$Maybe$Nothing;
-			} else {
-				return A2(
-					_elm_lang$core$Maybe$map,
-					F2(
-						function (x, y) {
-							return {ctor: '::', _0: x, _1: y};
-						})(_p3._0),
-					acc);
-			}
-		});
-	return A2(
-		_elm_lang$core$List$foldr,
-		step,
-		_elm_lang$core$Maybe$Just(
-			{ctor: '[]'}));
-};
-var _elm_community$maybe_extra$Maybe_Extra$combine = _elm_community$maybe_extra$Maybe_Extra$traverse(_elm_lang$core$Basics$identity);
-var _elm_community$maybe_extra$Maybe_Extra$maybeToArray = function (m) {
-	var _p4 = m;
-	if (_p4.ctor === 'Nothing') {
-		return _elm_lang$core$Array$empty;
-	} else {
-		return A2(_elm_lang$core$Array$repeat, 1, _p4._0);
-	}
-};
-var _elm_community$maybe_extra$Maybe_Extra$maybeToList = function (m) {
-	var _p5 = m;
-	if (_p5.ctor === 'Nothing') {
-		return {ctor: '[]'};
-	} else {
-		return {
-			ctor: '::',
-			_0: _p5._0,
-			_1: {ctor: '[]'}
-		};
-	}
-};
-var _elm_community$maybe_extra$Maybe_Extra$orElse = F2(
-	function (ma, mb) {
-		var _p6 = mb;
-		if (_p6.ctor === 'Nothing') {
-			return ma;
-		} else {
-			return mb;
-		}
-	});
-var _elm_community$maybe_extra$Maybe_Extra$orElseLazy = F2(
-	function (fma, mb) {
-		var _p7 = mb;
-		if (_p7.ctor === 'Nothing') {
-			return fma(
-				{ctor: '_Tuple0'});
-		} else {
-			return mb;
-		}
-	});
-var _elm_community$maybe_extra$Maybe_Extra$orLazy = F2(
-	function (ma, fmb) {
-		var _p8 = ma;
-		if (_p8.ctor === 'Nothing') {
-			return fmb(
-				{ctor: '_Tuple0'});
-		} else {
-			return ma;
-		}
-	});
-var _elm_community$maybe_extra$Maybe_Extra$or = F2(
-	function (ma, mb) {
-		var _p9 = ma;
-		if (_p9.ctor === 'Nothing') {
-			return mb;
-		} else {
-			return ma;
-		}
-	});
-var _elm_community$maybe_extra$Maybe_Extra$prev = _elm_lang$core$Maybe$map2(_elm_lang$core$Basics$always);
-var _elm_community$maybe_extra$Maybe_Extra$next = _elm_lang$core$Maybe$map2(
-	_elm_lang$core$Basics$flip(_elm_lang$core$Basics$always));
-var _elm_community$maybe_extra$Maybe_Extra$andMap = _elm_lang$core$Maybe$map2(
-	F2(
-		function (x, y) {
-			return y(x);
-		}));
-var _elm_community$maybe_extra$Maybe_Extra$unpack = F3(
-	function (d, f, m) {
-		var _p10 = m;
-		if (_p10.ctor === 'Nothing') {
-			return d(
-				{ctor: '_Tuple0'});
-		} else {
-			return f(_p10._0);
-		}
-	});
-var _elm_community$maybe_extra$Maybe_Extra$unwrap = F3(
-	function (d, f, m) {
-		var _p11 = m;
-		if (_p11.ctor === 'Nothing') {
-			return d;
-		} else {
-			return f(_p11._0);
-		}
-	});
-var _elm_community$maybe_extra$Maybe_Extra$isJust = function (m) {
-	var _p12 = m;
-	if (_p12.ctor === 'Nothing') {
-		return false;
-	} else {
-		return true;
-	}
-};
-var _elm_community$maybe_extra$Maybe_Extra$isNothing = function (m) {
-	var _p13 = m;
-	if (_p13.ctor === 'Nothing') {
-		return true;
-	} else {
-		return false;
-	}
-};
-var _elm_community$maybe_extra$Maybe_Extra$join = function (mx) {
-	var _p14 = mx;
-	if (_p14.ctor === 'Just') {
-		return _p14._0;
-	} else {
-		return _elm_lang$core$Maybe$Nothing;
-	}
-};
-var _elm_community$maybe_extra$Maybe_Extra_ops = _elm_community$maybe_extra$Maybe_Extra_ops || {};
-_elm_community$maybe_extra$Maybe_Extra_ops['?'] = F2(
-	function (mx, x) {
-		return A2(_elm_lang$core$Maybe$withDefault, x, mx);
-	});
-
-var _elm_lang$core$Task$onError = _elm_lang$core$Native_Scheduler.onError;
-var _elm_lang$core$Task$andThen = _elm_lang$core$Native_Scheduler.andThen;
-var _elm_lang$core$Task$spawnCmd = F2(
-	function (router, _p0) {
-		var _p1 = _p0;
-		return _elm_lang$core$Native_Scheduler.spawn(
-			A2(
-				_elm_lang$core$Task$andThen,
-				_elm_lang$core$Platform$sendToApp(router),
-				_p1._0));
-	});
-var _elm_lang$core$Task$fail = _elm_lang$core$Native_Scheduler.fail;
-var _elm_lang$core$Task$mapError = F2(
-	function (convert, task) {
-		return A2(
-			_elm_lang$core$Task$onError,
-			function (_p2) {
-				return _elm_lang$core$Task$fail(
-					convert(_p2));
-			},
-			task);
-	});
-var _elm_lang$core$Task$succeed = _elm_lang$core$Native_Scheduler.succeed;
-var _elm_lang$core$Task$map = F2(
-	function (func, taskA) {
-		return A2(
-			_elm_lang$core$Task$andThen,
-			function (a) {
-				return _elm_lang$core$Task$succeed(
-					func(a));
-			},
-			taskA);
-	});
-var _elm_lang$core$Task$map2 = F3(
-	function (func, taskA, taskB) {
-		return A2(
-			_elm_lang$core$Task$andThen,
-			function (a) {
-				return A2(
-					_elm_lang$core$Task$andThen,
-					function (b) {
-						return _elm_lang$core$Task$succeed(
-							A2(func, a, b));
-					},
-					taskB);
-			},
-			taskA);
-	});
-var _elm_lang$core$Task$map3 = F4(
-	function (func, taskA, taskB, taskC) {
-		return A2(
-			_elm_lang$core$Task$andThen,
-			function (a) {
-				return A2(
-					_elm_lang$core$Task$andThen,
-					function (b) {
-						return A2(
-							_elm_lang$core$Task$andThen,
-							function (c) {
-								return _elm_lang$core$Task$succeed(
-									A3(func, a, b, c));
-							},
-							taskC);
-					},
-					taskB);
-			},
-			taskA);
-	});
-var _elm_lang$core$Task$map4 = F5(
-	function (func, taskA, taskB, taskC, taskD) {
-		return A2(
-			_elm_lang$core$Task$andThen,
-			function (a) {
-				return A2(
-					_elm_lang$core$Task$andThen,
-					function (b) {
-						return A2(
-							_elm_lang$core$Task$andThen,
-							function (c) {
-								return A2(
-									_elm_lang$core$Task$andThen,
-									function (d) {
-										return _elm_lang$core$Task$succeed(
-											A4(func, a, b, c, d));
-									},
-									taskD);
-							},
-							taskC);
-					},
-					taskB);
-			},
-			taskA);
-	});
-var _elm_lang$core$Task$map5 = F6(
-	function (func, taskA, taskB, taskC, taskD, taskE) {
-		return A2(
-			_elm_lang$core$Task$andThen,
-			function (a) {
-				return A2(
-					_elm_lang$core$Task$andThen,
-					function (b) {
-						return A2(
-							_elm_lang$core$Task$andThen,
-							function (c) {
-								return A2(
-									_elm_lang$core$Task$andThen,
-									function (d) {
-										return A2(
-											_elm_lang$core$Task$andThen,
-											function (e) {
-												return _elm_lang$core$Task$succeed(
-													A5(func, a, b, c, d, e));
-											},
-											taskE);
-									},
-									taskD);
-							},
-							taskC);
-					},
-					taskB);
-			},
-			taskA);
-	});
-var _elm_lang$core$Task$sequence = function (tasks) {
-	var _p3 = tasks;
-	if (_p3.ctor === '[]') {
-		return _elm_lang$core$Task$succeed(
-			{ctor: '[]'});
-	} else {
-		return A3(
-			_elm_lang$core$Task$map2,
-			F2(
-				function (x, y) {
-					return {ctor: '::', _0: x, _1: y};
-				}),
-			_p3._0,
-			_elm_lang$core$Task$sequence(_p3._1));
-	}
-};
-var _elm_lang$core$Task$onEffects = F3(
-	function (router, commands, state) {
-		return A2(
-			_elm_lang$core$Task$map,
-			function (_p4) {
-				return {ctor: '_Tuple0'};
-			},
-			_elm_lang$core$Task$sequence(
-				A2(
-					_elm_lang$core$List$map,
-					_elm_lang$core$Task$spawnCmd(router),
-					commands)));
-	});
-var _elm_lang$core$Task$init = _elm_lang$core$Task$succeed(
-	{ctor: '_Tuple0'});
-var _elm_lang$core$Task$onSelfMsg = F3(
-	function (_p7, _p6, _p5) {
-		return _elm_lang$core$Task$succeed(
-			{ctor: '_Tuple0'});
-	});
-var _elm_lang$core$Task$command = _elm_lang$core$Native_Platform.leaf('Task');
-var _elm_lang$core$Task$Perform = function (a) {
-	return {ctor: 'Perform', _0: a};
-};
-var _elm_lang$core$Task$perform = F2(
-	function (toMessage, task) {
-		return _elm_lang$core$Task$command(
-			_elm_lang$core$Task$Perform(
-				A2(_elm_lang$core$Task$map, toMessage, task)));
-	});
-var _elm_lang$core$Task$attempt = F2(
-	function (resultToMessage, task) {
-		return _elm_lang$core$Task$command(
-			_elm_lang$core$Task$Perform(
-				A2(
-					_elm_lang$core$Task$onError,
-					function (_p8) {
-						return _elm_lang$core$Task$succeed(
-							resultToMessage(
-								_elm_lang$core$Result$Err(_p8)));
-					},
-					A2(
-						_elm_lang$core$Task$andThen,
-						function (_p9) {
-							return _elm_lang$core$Task$succeed(
-								resultToMessage(
-									_elm_lang$core$Result$Ok(_p9)));
-						},
-						task))));
-	});
-var _elm_lang$core$Task$cmdMap = F2(
-	function (tagger, _p10) {
-		var _p11 = _p10;
-		return _elm_lang$core$Task$Perform(
-			A2(_elm_lang$core$Task$map, tagger, _p11._0));
-	});
-_elm_lang$core$Native_Platform.effectManagers['Task'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Task$init, onEffects: _elm_lang$core$Task$onEffects, onSelfMsg: _elm_lang$core$Task$onSelfMsg, tag: 'cmd', cmdMap: _elm_lang$core$Task$cmdMap};
-
 var _elm_lang$core$Dict$foldr = F3(
 	function (f, acc, t) {
 		foldr:
@@ -5748,221 +5127,6 @@ var _elm_lang$core$Dict$diff = F2(
 			t2);
 	});
 
-//import Native.Scheduler //
-
-var _elm_lang$core$Native_Time = function() {
-
-var now = _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
-{
-	callback(_elm_lang$core$Native_Scheduler.succeed(Date.now()));
-});
-
-function setInterval_(interval, task)
-{
-	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
-	{
-		var id = setInterval(function() {
-			_elm_lang$core$Native_Scheduler.rawSpawn(task);
-		}, interval);
-
-		return function() { clearInterval(id); };
-	});
-}
-
-return {
-	now: now,
-	setInterval_: F2(setInterval_)
-};
-
-}();
-var _elm_lang$core$Time$setInterval = _elm_lang$core$Native_Time.setInterval_;
-var _elm_lang$core$Time$spawnHelp = F3(
-	function (router, intervals, processes) {
-		var _p0 = intervals;
-		if (_p0.ctor === '[]') {
-			return _elm_lang$core$Task$succeed(processes);
-		} else {
-			var _p1 = _p0._0;
-			var spawnRest = function (id) {
-				return A3(
-					_elm_lang$core$Time$spawnHelp,
-					router,
-					_p0._1,
-					A3(_elm_lang$core$Dict$insert, _p1, id, processes));
-			};
-			var spawnTimer = _elm_lang$core$Native_Scheduler.spawn(
-				A2(
-					_elm_lang$core$Time$setInterval,
-					_p1,
-					A2(_elm_lang$core$Platform$sendToSelf, router, _p1)));
-			return A2(_elm_lang$core$Task$andThen, spawnRest, spawnTimer);
-		}
-	});
-var _elm_lang$core$Time$addMySub = F2(
-	function (_p2, state) {
-		var _p3 = _p2;
-		var _p6 = _p3._1;
-		var _p5 = _p3._0;
-		var _p4 = A2(_elm_lang$core$Dict$get, _p5, state);
-		if (_p4.ctor === 'Nothing') {
-			return A3(
-				_elm_lang$core$Dict$insert,
-				_p5,
-				{
-					ctor: '::',
-					_0: _p6,
-					_1: {ctor: '[]'}
-				},
-				state);
-		} else {
-			return A3(
-				_elm_lang$core$Dict$insert,
-				_p5,
-				{ctor: '::', _0: _p6, _1: _p4._0},
-				state);
-		}
-	});
-var _elm_lang$core$Time$inMilliseconds = function (t) {
-	return t;
-};
-var _elm_lang$core$Time$millisecond = 1;
-var _elm_lang$core$Time$second = 1000 * _elm_lang$core$Time$millisecond;
-var _elm_lang$core$Time$minute = 60 * _elm_lang$core$Time$second;
-var _elm_lang$core$Time$hour = 60 * _elm_lang$core$Time$minute;
-var _elm_lang$core$Time$inHours = function (t) {
-	return t / _elm_lang$core$Time$hour;
-};
-var _elm_lang$core$Time$inMinutes = function (t) {
-	return t / _elm_lang$core$Time$minute;
-};
-var _elm_lang$core$Time$inSeconds = function (t) {
-	return t / _elm_lang$core$Time$second;
-};
-var _elm_lang$core$Time$now = _elm_lang$core$Native_Time.now;
-var _elm_lang$core$Time$onSelfMsg = F3(
-	function (router, interval, state) {
-		var _p7 = A2(_elm_lang$core$Dict$get, interval, state.taggers);
-		if (_p7.ctor === 'Nothing') {
-			return _elm_lang$core$Task$succeed(state);
-		} else {
-			var tellTaggers = function (time) {
-				return _elm_lang$core$Task$sequence(
-					A2(
-						_elm_lang$core$List$map,
-						function (tagger) {
-							return A2(
-								_elm_lang$core$Platform$sendToApp,
-								router,
-								tagger(time));
-						},
-						_p7._0));
-			};
-			return A2(
-				_elm_lang$core$Task$andThen,
-				function (_p8) {
-					return _elm_lang$core$Task$succeed(state);
-				},
-				A2(_elm_lang$core$Task$andThen, tellTaggers, _elm_lang$core$Time$now));
-		}
-	});
-var _elm_lang$core$Time$subscription = _elm_lang$core$Native_Platform.leaf('Time');
-var _elm_lang$core$Time$State = F2(
-	function (a, b) {
-		return {taggers: a, processes: b};
-	});
-var _elm_lang$core$Time$init = _elm_lang$core$Task$succeed(
-	A2(_elm_lang$core$Time$State, _elm_lang$core$Dict$empty, _elm_lang$core$Dict$empty));
-var _elm_lang$core$Time$onEffects = F3(
-	function (router, subs, _p9) {
-		var _p10 = _p9;
-		var rightStep = F3(
-			function (_p12, id, _p11) {
-				var _p13 = _p11;
-				return {
-					ctor: '_Tuple3',
-					_0: _p13._0,
-					_1: _p13._1,
-					_2: A2(
-						_elm_lang$core$Task$andThen,
-						function (_p14) {
-							return _p13._2;
-						},
-						_elm_lang$core$Native_Scheduler.kill(id))
-				};
-			});
-		var bothStep = F4(
-			function (interval, taggers, id, _p15) {
-				var _p16 = _p15;
-				return {
-					ctor: '_Tuple3',
-					_0: _p16._0,
-					_1: A3(_elm_lang$core$Dict$insert, interval, id, _p16._1),
-					_2: _p16._2
-				};
-			});
-		var leftStep = F3(
-			function (interval, taggers, _p17) {
-				var _p18 = _p17;
-				return {
-					ctor: '_Tuple3',
-					_0: {ctor: '::', _0: interval, _1: _p18._0},
-					_1: _p18._1,
-					_2: _p18._2
-				};
-			});
-		var newTaggers = A3(_elm_lang$core$List$foldl, _elm_lang$core$Time$addMySub, _elm_lang$core$Dict$empty, subs);
-		var _p19 = A6(
-			_elm_lang$core$Dict$merge,
-			leftStep,
-			bothStep,
-			rightStep,
-			newTaggers,
-			_p10.processes,
-			{
-				ctor: '_Tuple3',
-				_0: {ctor: '[]'},
-				_1: _elm_lang$core$Dict$empty,
-				_2: _elm_lang$core$Task$succeed(
-					{ctor: '_Tuple0'})
-			});
-		var spawnList = _p19._0;
-		var existingDict = _p19._1;
-		var killTask = _p19._2;
-		return A2(
-			_elm_lang$core$Task$andThen,
-			function (newProcesses) {
-				return _elm_lang$core$Task$succeed(
-					A2(_elm_lang$core$Time$State, newTaggers, newProcesses));
-			},
-			A2(
-				_elm_lang$core$Task$andThen,
-				function (_p20) {
-					return A3(_elm_lang$core$Time$spawnHelp, router, spawnList, existingDict);
-				},
-				killTask));
-	});
-var _elm_lang$core$Time$Every = F2(
-	function (a, b) {
-		return {ctor: 'Every', _0: a, _1: b};
-	});
-var _elm_lang$core$Time$every = F2(
-	function (interval, tagger) {
-		return _elm_lang$core$Time$subscription(
-			A2(_elm_lang$core$Time$Every, interval, tagger));
-	});
-var _elm_lang$core$Time$subMap = F2(
-	function (f, _p21) {
-		var _p22 = _p21;
-		return A2(
-			_elm_lang$core$Time$Every,
-			_p22._0,
-			function (_p23) {
-				return f(
-					_p22._1(_p23));
-			});
-	});
-_elm_lang$core$Native_Platform.effectManagers['Time'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Time$init, onEffects: _elm_lang$core$Time$onEffects, onSelfMsg: _elm_lang$core$Time$onSelfMsg, tag: 'sub', subMap: _elm_lang$core$Time$subMap};
-
 //import Maybe, Native.Array, Native.List, Native.Utils, Result //
 
 var _elm_lang$core$Native_Json = function() {
@@ -6613,6 +5777,993 @@ var _elm_lang$core$Json_Decode$bool = _elm_lang$core$Native_Json.decodePrimitive
 var _elm_lang$core$Json_Decode$string = _elm_lang$core$Native_Json.decodePrimitive('string');
 var _elm_lang$core$Json_Decode$Decoder = {ctor: 'Decoder'};
 
+var _debois$elm_dom$DOM$className = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'className',
+		_1: {ctor: '[]'}
+	},
+	_elm_lang$core$Json_Decode$string);
+var _debois$elm_dom$DOM$scrollTop = A2(_elm_lang$core$Json_Decode$field, 'scrollTop', _elm_lang$core$Json_Decode$float);
+var _debois$elm_dom$DOM$scrollLeft = A2(_elm_lang$core$Json_Decode$field, 'scrollLeft', _elm_lang$core$Json_Decode$float);
+var _debois$elm_dom$DOM$offsetTop = A2(_elm_lang$core$Json_Decode$field, 'offsetTop', _elm_lang$core$Json_Decode$float);
+var _debois$elm_dom$DOM$offsetLeft = A2(_elm_lang$core$Json_Decode$field, 'offsetLeft', _elm_lang$core$Json_Decode$float);
+var _debois$elm_dom$DOM$offsetHeight = A2(_elm_lang$core$Json_Decode$field, 'offsetHeight', _elm_lang$core$Json_Decode$float);
+var _debois$elm_dom$DOM$offsetWidth = A2(_elm_lang$core$Json_Decode$field, 'offsetWidth', _elm_lang$core$Json_Decode$float);
+var _debois$elm_dom$DOM$childNodes = function (decoder) {
+	var loop = F2(
+		function (idx, xs) {
+			return A2(
+				_elm_lang$core$Json_Decode$andThen,
+				function (_p0) {
+					return A2(
+						_elm_lang$core$Maybe$withDefault,
+						_elm_lang$core$Json_Decode$succeed(xs),
+						A2(
+							_elm_lang$core$Maybe$map,
+							function (x) {
+								return A2(
+									loop,
+									idx + 1,
+									{ctor: '::', _0: x, _1: xs});
+							},
+							_p0));
+				},
+				_elm_lang$core$Json_Decode$maybe(
+					A2(
+						_elm_lang$core$Json_Decode$field,
+						_elm_lang$core$Basics$toString(idx),
+						decoder)));
+		});
+	return A2(
+		_elm_lang$core$Json_Decode$map,
+		_elm_lang$core$List$reverse,
+		A2(
+			_elm_lang$core$Json_Decode$field,
+			'childNodes',
+			A2(
+				loop,
+				0,
+				{ctor: '[]'})));
+};
+var _debois$elm_dom$DOM$childNode = function (idx) {
+	return _elm_lang$core$Json_Decode$at(
+		{
+			ctor: '::',
+			_0: 'childNodes',
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$core$Basics$toString(idx),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _debois$elm_dom$DOM$parentElement = function (decoder) {
+	return A2(_elm_lang$core$Json_Decode$field, 'parentElement', decoder);
+};
+var _debois$elm_dom$DOM$previousSibling = function (decoder) {
+	return A2(_elm_lang$core$Json_Decode$field, 'previousSibling', decoder);
+};
+var _debois$elm_dom$DOM$nextSibling = function (decoder) {
+	return A2(_elm_lang$core$Json_Decode$field, 'nextSibling', decoder);
+};
+var _debois$elm_dom$DOM$offsetParent = F2(
+	function (x, decoder) {
+		return _elm_lang$core$Json_Decode$oneOf(
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$core$Json_Decode$field,
+					'offsetParent',
+					_elm_lang$core$Json_Decode$null(x)),
+				_1: {
+					ctor: '::',
+					_0: A2(_elm_lang$core$Json_Decode$field, 'offsetParent', decoder),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _debois$elm_dom$DOM$position = F2(
+	function (x, y) {
+		return A2(
+			_elm_lang$core$Json_Decode$andThen,
+			function (_p1) {
+				var _p2 = _p1;
+				var _p4 = _p2._1;
+				var _p3 = _p2._0;
+				return A2(
+					_debois$elm_dom$DOM$offsetParent,
+					{ctor: '_Tuple2', _0: _p3, _1: _p4},
+					A2(_debois$elm_dom$DOM$position, _p3, _p4));
+			},
+			A5(
+				_elm_lang$core$Json_Decode$map4,
+				F4(
+					function (scrollLeft, scrollTop, offsetLeft, offsetTop) {
+						return {ctor: '_Tuple2', _0: (x + offsetLeft) - scrollLeft, _1: (y + offsetTop) - scrollTop};
+					}),
+				_debois$elm_dom$DOM$scrollLeft,
+				_debois$elm_dom$DOM$scrollTop,
+				_debois$elm_dom$DOM$offsetLeft,
+				_debois$elm_dom$DOM$offsetTop));
+	});
+var _debois$elm_dom$DOM$boundingClientRect = A4(
+	_elm_lang$core$Json_Decode$map3,
+	F3(
+		function (_p5, width, height) {
+			var _p6 = _p5;
+			return {top: _p6._1, left: _p6._0, width: width, height: height};
+		}),
+	A2(_debois$elm_dom$DOM$position, 0, 0),
+	_debois$elm_dom$DOM$offsetWidth,
+	_debois$elm_dom$DOM$offsetHeight);
+var _debois$elm_dom$DOM$target = function (decoder) {
+	return A2(_elm_lang$core$Json_Decode$field, 'target', decoder);
+};
+var _debois$elm_dom$DOM$Rectangle = F4(
+	function (a, b, c, d) {
+		return {top: a, left: b, width: c, height: d};
+	});
+
+var _elm_community$array_extra$Array_Extra$splitAt = F2(
+	function (index, xs) {
+		var len = _elm_lang$core$Array$length(xs);
+		var _p0 = {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.cmp(index, 0) > 0,
+			_1: _elm_lang$core$Native_Utils.cmp(index, len) < 0
+		};
+		if (_p0._0 === true) {
+			if (_p0._1 === true) {
+				return {
+					ctor: '_Tuple2',
+					_0: A3(_elm_lang$core$Array$slice, 0, index, xs),
+					_1: A3(_elm_lang$core$Array$slice, index, len, xs)
+				};
+			} else {
+				return {ctor: '_Tuple2', _0: xs, _1: _elm_lang$core$Array$empty};
+			}
+		} else {
+			if (_p0._1 === true) {
+				return {ctor: '_Tuple2', _0: _elm_lang$core$Array$empty, _1: xs};
+			} else {
+				return {ctor: '_Tuple2', _0: _elm_lang$core$Array$empty, _1: _elm_lang$core$Array$empty};
+			}
+		}
+	});
+var _elm_community$array_extra$Array_Extra$removeAt = F2(
+	function (index, xs) {
+		var _p1 = A2(_elm_community$array_extra$Array_Extra$splitAt, index, xs);
+		var xs0 = _p1._0;
+		var xs1 = _p1._1;
+		var len1 = _elm_lang$core$Array$length(xs1);
+		return _elm_lang$core$Native_Utils.eq(len1, 0) ? xs0 : A2(
+			_elm_lang$core$Array$append,
+			xs0,
+			A3(_elm_lang$core$Array$slice, 1, len1, xs1));
+	});
+var _elm_community$array_extra$Array_Extra$resizerIndexed = F3(
+	function (n, f, xs) {
+		var gen = F2(
+			function (m, g) {
+				return A2(
+					_elm_lang$core$Array$indexedMap,
+					F2(
+						function (i, _p2) {
+							return g(i);
+						}),
+					A2(
+						_elm_lang$core$Array$repeat,
+						m,
+						{ctor: '_Tuple0'}));
+			});
+		var l = _elm_lang$core$Array$length(xs);
+		return (_elm_lang$core$Native_Utils.cmp(l, n) > 0) ? A3(_elm_lang$core$Array$slice, l - n, l, xs) : ((_elm_lang$core$Native_Utils.cmp(l, n) < 0) ? A2(
+			_elm_lang$core$Array$append,
+			A2(gen, n - l, f),
+			xs) : xs);
+	});
+var _elm_community$array_extra$Array_Extra$resizelIndexed = F3(
+	function (n, f, xs) {
+		var gen = F2(
+			function (m, g) {
+				return A2(
+					_elm_lang$core$Array$indexedMap,
+					F2(
+						function (i, _p3) {
+							return g(i);
+						}),
+					A2(
+						_elm_lang$core$Array$repeat,
+						m,
+						{ctor: '_Tuple0'}));
+			});
+		var l = _elm_lang$core$Array$length(xs);
+		return (_elm_lang$core$Native_Utils.cmp(l, n) > 0) ? A3(_elm_lang$core$Array$slice, 0, n, xs) : ((_elm_lang$core$Native_Utils.cmp(l, n) < 0) ? A2(
+			_elm_lang$core$Array$append,
+			xs,
+			A2(
+				gen,
+				n - l,
+				function (_p4) {
+					return f(
+						function (i) {
+							return i + l;
+						}(_p4));
+				})) : xs);
+	});
+var _elm_community$array_extra$Array_Extra$resizerRepeat = F3(
+	function (n, val, xs) {
+		var l = _elm_lang$core$Array$length(xs);
+		return (_elm_lang$core$Native_Utils.cmp(l, n) > 0) ? A3(_elm_lang$core$Array$slice, l - n, l, xs) : ((_elm_lang$core$Native_Utils.cmp(l, n) < 0) ? A2(
+			_elm_lang$core$Array$append,
+			A2(_elm_lang$core$Array$repeat, n - l, val),
+			xs) : xs);
+	});
+var _elm_community$array_extra$Array_Extra$resizelRepeat = F3(
+	function (n, val, xs) {
+		var l = _elm_lang$core$Array$length(xs);
+		return (_elm_lang$core$Native_Utils.cmp(l, n) > 0) ? A3(_elm_lang$core$Array$slice, 0, n, xs) : ((_elm_lang$core$Native_Utils.cmp(l, n) < 0) ? A2(
+			_elm_lang$core$Array$append,
+			xs,
+			A2(_elm_lang$core$Array$repeat, n - l, val)) : xs);
+	});
+var _elm_community$array_extra$Array_Extra$removeWhen = F2(
+	function (pred, xs) {
+		return A2(
+			_elm_lang$core$Array$filter,
+			function (_p5) {
+				return !pred(_p5);
+			},
+			xs);
+	});
+var _elm_community$array_extra$Array_Extra$filterMap = F2(
+	function (f, xs) {
+		var maybePush = F3(
+			function (f, mx, xs) {
+				var _p6 = f(mx);
+				if (_p6.ctor === 'Just') {
+					return A2(_elm_lang$core$Array$push, _p6._0, xs);
+				} else {
+					return xs;
+				}
+			});
+		return A3(
+			_elm_lang$core$Array$foldl,
+			maybePush(f),
+			_elm_lang$core$Array$empty,
+			xs);
+	});
+var _elm_community$array_extra$Array_Extra$getUnsafe = F2(
+	function (n, xs) {
+		var _p7 = A2(_elm_lang$core$Array$get, n, xs);
+		if (_p7.ctor === 'Just') {
+			return _p7._0;
+		} else {
+			return _elm_lang$core$Native_Utils.crashCase(
+				'Array.Extra',
+				{
+					start: {line: 73, column: 5},
+					end: {line: 78, column: 125}
+				},
+				_p7)(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'Index ',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(n),
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							' of Array with length ',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								_elm_lang$core$Basics$toString(
+									_elm_lang$core$Array$length(xs)),
+								' is not reachable.')))));
+		}
+	});
+var _elm_community$array_extra$Array_Extra$apply = F2(
+	function (fs, xs) {
+		var l = A2(
+			_elm_lang$core$Basics$min,
+			_elm_lang$core$Array$length(fs),
+			_elm_lang$core$Array$length(xs));
+		var fs_ = A3(_elm_lang$core$Array$slice, 0, l, fs);
+		return A2(
+			_elm_lang$core$Array$indexedMap,
+			F2(
+				function (n, f) {
+					return f(
+						A2(_elm_community$array_extra$Array_Extra$getUnsafe, n, xs));
+				}),
+			fs_);
+	});
+var _elm_community$array_extra$Array_Extra$map2 = F2(
+	function (f, ws) {
+		return _elm_community$array_extra$Array_Extra$apply(
+			A2(_elm_lang$core$Array$map, f, ws));
+	});
+var _elm_community$array_extra$Array_Extra$zip = _elm_community$array_extra$Array_Extra$map2(
+	F2(
+		function (v0, v1) {
+			return {ctor: '_Tuple2', _0: v0, _1: v1};
+		}));
+var _elm_community$array_extra$Array_Extra$map3 = F3(
+	function (f, ws, xs) {
+		return _elm_community$array_extra$Array_Extra$apply(
+			A3(_elm_community$array_extra$Array_Extra$map2, f, ws, xs));
+	});
+var _elm_community$array_extra$Array_Extra$zip3 = _elm_community$array_extra$Array_Extra$map3(
+	F3(
+		function (v0, v1, v2) {
+			return {ctor: '_Tuple3', _0: v0, _1: v1, _2: v2};
+		}));
+var _elm_community$array_extra$Array_Extra$map4 = F4(
+	function (f, ws, xs, ys) {
+		return _elm_community$array_extra$Array_Extra$apply(
+			A4(_elm_community$array_extra$Array_Extra$map3, f, ws, xs, ys));
+	});
+var _elm_community$array_extra$Array_Extra$zip4 = _elm_community$array_extra$Array_Extra$map4(
+	F4(
+		function (v0, v1, v2, v3) {
+			return {ctor: '_Tuple4', _0: v0, _1: v1, _2: v2, _3: v3};
+		}));
+var _elm_community$array_extra$Array_Extra$map5 = F5(
+	function (f, ws, xs, ys, zs) {
+		return _elm_community$array_extra$Array_Extra$apply(
+			A5(_elm_community$array_extra$Array_Extra$map4, f, ws, xs, ys, zs));
+	});
+var _elm_community$array_extra$Array_Extra$zip5 = _elm_community$array_extra$Array_Extra$map5(
+	F5(
+		function (v0, v1, v2, v3, v4) {
+			return {ctor: '_Tuple5', _0: v0, _1: v1, _2: v2, _3: v3, _4: v4};
+		}));
+var _elm_community$array_extra$Array_Extra$sliceUntil = F2(
+	function (n, a) {
+		return (_elm_lang$core$Native_Utils.cmp(n, 0) > -1) ? A3(_elm_lang$core$Array$slice, 0, n, a) : A3(
+			_elm_lang$core$Array$slice,
+			0,
+			_elm_lang$core$Array$length(a) + n,
+			a);
+	});
+var _elm_community$array_extra$Array_Extra$sliceFrom = F2(
+	function (n, a) {
+		return A3(
+			_elm_lang$core$Array$slice,
+			n,
+			_elm_lang$core$Array$length(a),
+			a);
+	});
+var _elm_community$array_extra$Array_Extra$update = F3(
+	function (n, f, a) {
+		var element = A2(_elm_lang$core$Array$get, n, a);
+		var _p9 = element;
+		if (_p9.ctor === 'Nothing') {
+			return a;
+		} else {
+			return A3(
+				_elm_lang$core$Array$set,
+				n,
+				f(_p9._0),
+				a);
+		}
+	});
+
+var _elm_community$maybe_extra$Maybe_Extra$foldrValues = F2(
+	function (item, list) {
+		var _p0 = item;
+		if (_p0.ctor === 'Nothing') {
+			return list;
+		} else {
+			return {ctor: '::', _0: _p0._0, _1: list};
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$values = A2(
+	_elm_lang$core$List$foldr,
+	_elm_community$maybe_extra$Maybe_Extra$foldrValues,
+	{ctor: '[]'});
+var _elm_community$maybe_extra$Maybe_Extra$filter = F2(
+	function (f, m) {
+		var _p1 = A2(_elm_lang$core$Maybe$map, f, m);
+		if ((_p1.ctor === 'Just') && (_p1._0 === true)) {
+			return m;
+		} else {
+			return _elm_lang$core$Maybe$Nothing;
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$traverseArray = function (f) {
+	var step = F2(
+		function (e, acc) {
+			var _p2 = f(e);
+			if (_p2.ctor === 'Nothing') {
+				return _elm_lang$core$Maybe$Nothing;
+			} else {
+				return A2(
+					_elm_lang$core$Maybe$map,
+					_elm_lang$core$Array$push(_p2._0),
+					acc);
+			}
+		});
+	return A2(
+		_elm_lang$core$Array$foldl,
+		step,
+		_elm_lang$core$Maybe$Just(_elm_lang$core$Array$empty));
+};
+var _elm_community$maybe_extra$Maybe_Extra$combineArray = _elm_community$maybe_extra$Maybe_Extra$traverseArray(_elm_lang$core$Basics$identity);
+var _elm_community$maybe_extra$Maybe_Extra$traverse = function (f) {
+	var step = F2(
+		function (e, acc) {
+			var _p3 = f(e);
+			if (_p3.ctor === 'Nothing') {
+				return _elm_lang$core$Maybe$Nothing;
+			} else {
+				return A2(
+					_elm_lang$core$Maybe$map,
+					F2(
+						function (x, y) {
+							return {ctor: '::', _0: x, _1: y};
+						})(_p3._0),
+					acc);
+			}
+		});
+	return A2(
+		_elm_lang$core$List$foldr,
+		step,
+		_elm_lang$core$Maybe$Just(
+			{ctor: '[]'}));
+};
+var _elm_community$maybe_extra$Maybe_Extra$combine = _elm_community$maybe_extra$Maybe_Extra$traverse(_elm_lang$core$Basics$identity);
+var _elm_community$maybe_extra$Maybe_Extra$maybeToArray = function (m) {
+	var _p4 = m;
+	if (_p4.ctor === 'Nothing') {
+		return _elm_lang$core$Array$empty;
+	} else {
+		return A2(_elm_lang$core$Array$repeat, 1, _p4._0);
+	}
+};
+var _elm_community$maybe_extra$Maybe_Extra$maybeToList = function (m) {
+	var _p5 = m;
+	if (_p5.ctor === 'Nothing') {
+		return {ctor: '[]'};
+	} else {
+		return {
+			ctor: '::',
+			_0: _p5._0,
+			_1: {ctor: '[]'}
+		};
+	}
+};
+var _elm_community$maybe_extra$Maybe_Extra$orElse = F2(
+	function (ma, mb) {
+		var _p6 = mb;
+		if (_p6.ctor === 'Nothing') {
+			return ma;
+		} else {
+			return mb;
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$orElseLazy = F2(
+	function (fma, mb) {
+		var _p7 = mb;
+		if (_p7.ctor === 'Nothing') {
+			return fma(
+				{ctor: '_Tuple0'});
+		} else {
+			return mb;
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$orLazy = F2(
+	function (ma, fmb) {
+		var _p8 = ma;
+		if (_p8.ctor === 'Nothing') {
+			return fmb(
+				{ctor: '_Tuple0'});
+		} else {
+			return ma;
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$or = F2(
+	function (ma, mb) {
+		var _p9 = ma;
+		if (_p9.ctor === 'Nothing') {
+			return mb;
+		} else {
+			return ma;
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$prev = _elm_lang$core$Maybe$map2(_elm_lang$core$Basics$always);
+var _elm_community$maybe_extra$Maybe_Extra$next = _elm_lang$core$Maybe$map2(
+	_elm_lang$core$Basics$flip(_elm_lang$core$Basics$always));
+var _elm_community$maybe_extra$Maybe_Extra$andMap = _elm_lang$core$Maybe$map2(
+	F2(
+		function (x, y) {
+			return y(x);
+		}));
+var _elm_community$maybe_extra$Maybe_Extra$unpack = F3(
+	function (d, f, m) {
+		var _p10 = m;
+		if (_p10.ctor === 'Nothing') {
+			return d(
+				{ctor: '_Tuple0'});
+		} else {
+			return f(_p10._0);
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$unwrap = F3(
+	function (d, f, m) {
+		var _p11 = m;
+		if (_p11.ctor === 'Nothing') {
+			return d;
+		} else {
+			return f(_p11._0);
+		}
+	});
+var _elm_community$maybe_extra$Maybe_Extra$isJust = function (m) {
+	var _p12 = m;
+	if (_p12.ctor === 'Nothing') {
+		return false;
+	} else {
+		return true;
+	}
+};
+var _elm_community$maybe_extra$Maybe_Extra$isNothing = function (m) {
+	var _p13 = m;
+	if (_p13.ctor === 'Nothing') {
+		return true;
+	} else {
+		return false;
+	}
+};
+var _elm_community$maybe_extra$Maybe_Extra$join = function (mx) {
+	var _p14 = mx;
+	if (_p14.ctor === 'Just') {
+		return _p14._0;
+	} else {
+		return _elm_lang$core$Maybe$Nothing;
+	}
+};
+var _elm_community$maybe_extra$Maybe_Extra_ops = _elm_community$maybe_extra$Maybe_Extra_ops || {};
+_elm_community$maybe_extra$Maybe_Extra_ops['?'] = F2(
+	function (mx, x) {
+		return A2(_elm_lang$core$Maybe$withDefault, x, mx);
+	});
+
+var _elm_lang$core$Native_Bitwise = function() {
+
+return {
+	and: F2(function and(a, b) { return a & b; }),
+	or: F2(function or(a, b) { return a | b; }),
+	xor: F2(function xor(a, b) { return a ^ b; }),
+	complement: function complement(a) { return ~a; },
+	shiftLeftBy: F2(function(offset, a) { return a << offset; }),
+	shiftRightBy: F2(function(offset, a) { return a >> offset; }),
+	shiftRightZfBy: F2(function(offset, a) { return a >>> offset; })
+};
+
+}();
+
+var _elm_lang$core$Bitwise$shiftRightZfBy = _elm_lang$core$Native_Bitwise.shiftRightZfBy;
+var _elm_lang$core$Bitwise$shiftRightBy = _elm_lang$core$Native_Bitwise.shiftRightBy;
+var _elm_lang$core$Bitwise$shiftLeftBy = _elm_lang$core$Native_Bitwise.shiftLeftBy;
+var _elm_lang$core$Bitwise$complement = _elm_lang$core$Native_Bitwise.complement;
+var _elm_lang$core$Bitwise$xor = _elm_lang$core$Native_Bitwise.xor;
+var _elm_lang$core$Bitwise$or = _elm_lang$core$Native_Bitwise.or;
+var _elm_lang$core$Bitwise$and = _elm_lang$core$Native_Bitwise.and;
+
+var _elm_lang$core$Task$onError = _elm_lang$core$Native_Scheduler.onError;
+var _elm_lang$core$Task$andThen = _elm_lang$core$Native_Scheduler.andThen;
+var _elm_lang$core$Task$spawnCmd = F2(
+	function (router, _p0) {
+		var _p1 = _p0;
+		return _elm_lang$core$Native_Scheduler.spawn(
+			A2(
+				_elm_lang$core$Task$andThen,
+				_elm_lang$core$Platform$sendToApp(router),
+				_p1._0));
+	});
+var _elm_lang$core$Task$fail = _elm_lang$core$Native_Scheduler.fail;
+var _elm_lang$core$Task$mapError = F2(
+	function (convert, task) {
+		return A2(
+			_elm_lang$core$Task$onError,
+			function (_p2) {
+				return _elm_lang$core$Task$fail(
+					convert(_p2));
+			},
+			task);
+	});
+var _elm_lang$core$Task$succeed = _elm_lang$core$Native_Scheduler.succeed;
+var _elm_lang$core$Task$map = F2(
+	function (func, taskA) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (a) {
+				return _elm_lang$core$Task$succeed(
+					func(a));
+			},
+			taskA);
+	});
+var _elm_lang$core$Task$map2 = F3(
+	function (func, taskA, taskB) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (a) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					function (b) {
+						return _elm_lang$core$Task$succeed(
+							A2(func, a, b));
+					},
+					taskB);
+			},
+			taskA);
+	});
+var _elm_lang$core$Task$map3 = F4(
+	function (func, taskA, taskB, taskC) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (a) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					function (b) {
+						return A2(
+							_elm_lang$core$Task$andThen,
+							function (c) {
+								return _elm_lang$core$Task$succeed(
+									A3(func, a, b, c));
+							},
+							taskC);
+					},
+					taskB);
+			},
+			taskA);
+	});
+var _elm_lang$core$Task$map4 = F5(
+	function (func, taskA, taskB, taskC, taskD) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (a) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					function (b) {
+						return A2(
+							_elm_lang$core$Task$andThen,
+							function (c) {
+								return A2(
+									_elm_lang$core$Task$andThen,
+									function (d) {
+										return _elm_lang$core$Task$succeed(
+											A4(func, a, b, c, d));
+									},
+									taskD);
+							},
+							taskC);
+					},
+					taskB);
+			},
+			taskA);
+	});
+var _elm_lang$core$Task$map5 = F6(
+	function (func, taskA, taskB, taskC, taskD, taskE) {
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (a) {
+				return A2(
+					_elm_lang$core$Task$andThen,
+					function (b) {
+						return A2(
+							_elm_lang$core$Task$andThen,
+							function (c) {
+								return A2(
+									_elm_lang$core$Task$andThen,
+									function (d) {
+										return A2(
+											_elm_lang$core$Task$andThen,
+											function (e) {
+												return _elm_lang$core$Task$succeed(
+													A5(func, a, b, c, d, e));
+											},
+											taskE);
+									},
+									taskD);
+							},
+							taskC);
+					},
+					taskB);
+			},
+			taskA);
+	});
+var _elm_lang$core$Task$sequence = function (tasks) {
+	var _p3 = tasks;
+	if (_p3.ctor === '[]') {
+		return _elm_lang$core$Task$succeed(
+			{ctor: '[]'});
+	} else {
+		return A3(
+			_elm_lang$core$Task$map2,
+			F2(
+				function (x, y) {
+					return {ctor: '::', _0: x, _1: y};
+				}),
+			_p3._0,
+			_elm_lang$core$Task$sequence(_p3._1));
+	}
+};
+var _elm_lang$core$Task$onEffects = F3(
+	function (router, commands, state) {
+		return A2(
+			_elm_lang$core$Task$map,
+			function (_p4) {
+				return {ctor: '_Tuple0'};
+			},
+			_elm_lang$core$Task$sequence(
+				A2(
+					_elm_lang$core$List$map,
+					_elm_lang$core$Task$spawnCmd(router),
+					commands)));
+	});
+var _elm_lang$core$Task$init = _elm_lang$core$Task$succeed(
+	{ctor: '_Tuple0'});
+var _elm_lang$core$Task$onSelfMsg = F3(
+	function (_p7, _p6, _p5) {
+		return _elm_lang$core$Task$succeed(
+			{ctor: '_Tuple0'});
+	});
+var _elm_lang$core$Task$command = _elm_lang$core$Native_Platform.leaf('Task');
+var _elm_lang$core$Task$Perform = function (a) {
+	return {ctor: 'Perform', _0: a};
+};
+var _elm_lang$core$Task$perform = F2(
+	function (toMessage, task) {
+		return _elm_lang$core$Task$command(
+			_elm_lang$core$Task$Perform(
+				A2(_elm_lang$core$Task$map, toMessage, task)));
+	});
+var _elm_lang$core$Task$attempt = F2(
+	function (resultToMessage, task) {
+		return _elm_lang$core$Task$command(
+			_elm_lang$core$Task$Perform(
+				A2(
+					_elm_lang$core$Task$onError,
+					function (_p8) {
+						return _elm_lang$core$Task$succeed(
+							resultToMessage(
+								_elm_lang$core$Result$Err(_p8)));
+					},
+					A2(
+						_elm_lang$core$Task$andThen,
+						function (_p9) {
+							return _elm_lang$core$Task$succeed(
+								resultToMessage(
+									_elm_lang$core$Result$Ok(_p9)));
+						},
+						task))));
+	});
+var _elm_lang$core$Task$cmdMap = F2(
+	function (tagger, _p10) {
+		var _p11 = _p10;
+		return _elm_lang$core$Task$Perform(
+			A2(_elm_lang$core$Task$map, tagger, _p11._0));
+	});
+_elm_lang$core$Native_Platform.effectManagers['Task'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Task$init, onEffects: _elm_lang$core$Task$onEffects, onSelfMsg: _elm_lang$core$Task$onSelfMsg, tag: 'cmd', cmdMap: _elm_lang$core$Task$cmdMap};
+
+//import Native.Scheduler //
+
+var _elm_lang$core$Native_Time = function() {
+
+var now = _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+{
+	callback(_elm_lang$core$Native_Scheduler.succeed(Date.now()));
+});
+
+function setInterval_(interval, task)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		var id = setInterval(function() {
+			_elm_lang$core$Native_Scheduler.rawSpawn(task);
+		}, interval);
+
+		return function() { clearInterval(id); };
+	});
+}
+
+return {
+	now: now,
+	setInterval_: F2(setInterval_)
+};
+
+}();
+var _elm_lang$core$Time$setInterval = _elm_lang$core$Native_Time.setInterval_;
+var _elm_lang$core$Time$spawnHelp = F3(
+	function (router, intervals, processes) {
+		var _p0 = intervals;
+		if (_p0.ctor === '[]') {
+			return _elm_lang$core$Task$succeed(processes);
+		} else {
+			var _p1 = _p0._0;
+			var spawnRest = function (id) {
+				return A3(
+					_elm_lang$core$Time$spawnHelp,
+					router,
+					_p0._1,
+					A3(_elm_lang$core$Dict$insert, _p1, id, processes));
+			};
+			var spawnTimer = _elm_lang$core$Native_Scheduler.spawn(
+				A2(
+					_elm_lang$core$Time$setInterval,
+					_p1,
+					A2(_elm_lang$core$Platform$sendToSelf, router, _p1)));
+			return A2(_elm_lang$core$Task$andThen, spawnRest, spawnTimer);
+		}
+	});
+var _elm_lang$core$Time$addMySub = F2(
+	function (_p2, state) {
+		var _p3 = _p2;
+		var _p6 = _p3._1;
+		var _p5 = _p3._0;
+		var _p4 = A2(_elm_lang$core$Dict$get, _p5, state);
+		if (_p4.ctor === 'Nothing') {
+			return A3(
+				_elm_lang$core$Dict$insert,
+				_p5,
+				{
+					ctor: '::',
+					_0: _p6,
+					_1: {ctor: '[]'}
+				},
+				state);
+		} else {
+			return A3(
+				_elm_lang$core$Dict$insert,
+				_p5,
+				{ctor: '::', _0: _p6, _1: _p4._0},
+				state);
+		}
+	});
+var _elm_lang$core$Time$inMilliseconds = function (t) {
+	return t;
+};
+var _elm_lang$core$Time$millisecond = 1;
+var _elm_lang$core$Time$second = 1000 * _elm_lang$core$Time$millisecond;
+var _elm_lang$core$Time$minute = 60 * _elm_lang$core$Time$second;
+var _elm_lang$core$Time$hour = 60 * _elm_lang$core$Time$minute;
+var _elm_lang$core$Time$inHours = function (t) {
+	return t / _elm_lang$core$Time$hour;
+};
+var _elm_lang$core$Time$inMinutes = function (t) {
+	return t / _elm_lang$core$Time$minute;
+};
+var _elm_lang$core$Time$inSeconds = function (t) {
+	return t / _elm_lang$core$Time$second;
+};
+var _elm_lang$core$Time$now = _elm_lang$core$Native_Time.now;
+var _elm_lang$core$Time$onSelfMsg = F3(
+	function (router, interval, state) {
+		var _p7 = A2(_elm_lang$core$Dict$get, interval, state.taggers);
+		if (_p7.ctor === 'Nothing') {
+			return _elm_lang$core$Task$succeed(state);
+		} else {
+			var tellTaggers = function (time) {
+				return _elm_lang$core$Task$sequence(
+					A2(
+						_elm_lang$core$List$map,
+						function (tagger) {
+							return A2(
+								_elm_lang$core$Platform$sendToApp,
+								router,
+								tagger(time));
+						},
+						_p7._0));
+			};
+			return A2(
+				_elm_lang$core$Task$andThen,
+				function (_p8) {
+					return _elm_lang$core$Task$succeed(state);
+				},
+				A2(_elm_lang$core$Task$andThen, tellTaggers, _elm_lang$core$Time$now));
+		}
+	});
+var _elm_lang$core$Time$subscription = _elm_lang$core$Native_Platform.leaf('Time');
+var _elm_lang$core$Time$State = F2(
+	function (a, b) {
+		return {taggers: a, processes: b};
+	});
+var _elm_lang$core$Time$init = _elm_lang$core$Task$succeed(
+	A2(_elm_lang$core$Time$State, _elm_lang$core$Dict$empty, _elm_lang$core$Dict$empty));
+var _elm_lang$core$Time$onEffects = F3(
+	function (router, subs, _p9) {
+		var _p10 = _p9;
+		var rightStep = F3(
+			function (_p12, id, _p11) {
+				var _p13 = _p11;
+				return {
+					ctor: '_Tuple3',
+					_0: _p13._0,
+					_1: _p13._1,
+					_2: A2(
+						_elm_lang$core$Task$andThen,
+						function (_p14) {
+							return _p13._2;
+						},
+						_elm_lang$core$Native_Scheduler.kill(id))
+				};
+			});
+		var bothStep = F4(
+			function (interval, taggers, id, _p15) {
+				var _p16 = _p15;
+				return {
+					ctor: '_Tuple3',
+					_0: _p16._0,
+					_1: A3(_elm_lang$core$Dict$insert, interval, id, _p16._1),
+					_2: _p16._2
+				};
+			});
+		var leftStep = F3(
+			function (interval, taggers, _p17) {
+				var _p18 = _p17;
+				return {
+					ctor: '_Tuple3',
+					_0: {ctor: '::', _0: interval, _1: _p18._0},
+					_1: _p18._1,
+					_2: _p18._2
+				};
+			});
+		var newTaggers = A3(_elm_lang$core$List$foldl, _elm_lang$core$Time$addMySub, _elm_lang$core$Dict$empty, subs);
+		var _p19 = A6(
+			_elm_lang$core$Dict$merge,
+			leftStep,
+			bothStep,
+			rightStep,
+			newTaggers,
+			_p10.processes,
+			{
+				ctor: '_Tuple3',
+				_0: {ctor: '[]'},
+				_1: _elm_lang$core$Dict$empty,
+				_2: _elm_lang$core$Task$succeed(
+					{ctor: '_Tuple0'})
+			});
+		var spawnList = _p19._0;
+		var existingDict = _p19._1;
+		var killTask = _p19._2;
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (newProcesses) {
+				return _elm_lang$core$Task$succeed(
+					A2(_elm_lang$core$Time$State, newTaggers, newProcesses));
+			},
+			A2(
+				_elm_lang$core$Task$andThen,
+				function (_p20) {
+					return A3(_elm_lang$core$Time$spawnHelp, router, spawnList, existingDict);
+				},
+				killTask));
+	});
+var _elm_lang$core$Time$Every = F2(
+	function (a, b) {
+		return {ctor: 'Every', _0: a, _1: b};
+	});
+var _elm_lang$core$Time$every = F2(
+	function (interval, tagger) {
+		return _elm_lang$core$Time$subscription(
+			A2(_elm_lang$core$Time$Every, interval, tagger));
+	});
+var _elm_lang$core$Time$subMap = F2(
+	function (f, _p21) {
+		var _p22 = _p21;
+		return A2(
+			_elm_lang$core$Time$Every,
+			_p22._0,
+			function (_p23) {
+				return f(
+					_p22._1(_p23));
+			});
+	});
+_elm_lang$core$Native_Platform.effectManagers['Time'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Time$init, onEffects: _elm_lang$core$Time$onEffects, onSelfMsg: _elm_lang$core$Time$onSelfMsg, tag: 'sub', subMap: _elm_lang$core$Time$subMap};
+
 //import Maybe, Native.List //
 
 var _elm_lang$core$Native_Regex = function() {
@@ -6736,385 +6887,6 @@ return {
 var _elm_lang$core$Process$kill = _elm_lang$core$Native_Scheduler.kill;
 var _elm_lang$core$Process$sleep = _elm_lang$core$Native_Scheduler.sleep;
 var _elm_lang$core$Process$spawn = _elm_lang$core$Native_Scheduler.spawn;
-
-var _elm_lang$core$Random$onSelfMsg = F3(
-	function (_p1, _p0, seed) {
-		return _elm_lang$core$Task$succeed(seed);
-	});
-var _elm_lang$core$Random$magicNum8 = 2147483562;
-var _elm_lang$core$Random$range = function (_p2) {
-	return {ctor: '_Tuple2', _0: 0, _1: _elm_lang$core$Random$magicNum8};
-};
-var _elm_lang$core$Random$magicNum7 = 2147483399;
-var _elm_lang$core$Random$magicNum6 = 2147483563;
-var _elm_lang$core$Random$magicNum5 = 3791;
-var _elm_lang$core$Random$magicNum4 = 40692;
-var _elm_lang$core$Random$magicNum3 = 52774;
-var _elm_lang$core$Random$magicNum2 = 12211;
-var _elm_lang$core$Random$magicNum1 = 53668;
-var _elm_lang$core$Random$magicNum0 = 40014;
-var _elm_lang$core$Random$step = F2(
-	function (_p3, seed) {
-		var _p4 = _p3;
-		return _p4._0(seed);
-	});
-var _elm_lang$core$Random$onEffects = F3(
-	function (router, commands, seed) {
-		var _p5 = commands;
-		if (_p5.ctor === '[]') {
-			return _elm_lang$core$Task$succeed(seed);
-		} else {
-			var _p6 = A2(_elm_lang$core$Random$step, _p5._0._0, seed);
-			var value = _p6._0;
-			var newSeed = _p6._1;
-			return A2(
-				_elm_lang$core$Task$andThen,
-				function (_p7) {
-					return A3(_elm_lang$core$Random$onEffects, router, _p5._1, newSeed);
-				},
-				A2(_elm_lang$core$Platform$sendToApp, router, value));
-		}
-	});
-var _elm_lang$core$Random$listHelp = F4(
-	function (list, n, generate, seed) {
-		listHelp:
-		while (true) {
-			if (_elm_lang$core$Native_Utils.cmp(n, 1) < 0) {
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$List$reverse(list),
-					_1: seed
-				};
-			} else {
-				var _p8 = generate(seed);
-				var value = _p8._0;
-				var newSeed = _p8._1;
-				var _v2 = {ctor: '::', _0: value, _1: list},
-					_v3 = n - 1,
-					_v4 = generate,
-					_v5 = newSeed;
-				list = _v2;
-				n = _v3;
-				generate = _v4;
-				seed = _v5;
-				continue listHelp;
-			}
-		}
-	});
-var _elm_lang$core$Random$minInt = -2147483648;
-var _elm_lang$core$Random$maxInt = 2147483647;
-var _elm_lang$core$Random$iLogBase = F2(
-	function (b, i) {
-		return (_elm_lang$core$Native_Utils.cmp(i, b) < 0) ? 1 : (1 + A2(_elm_lang$core$Random$iLogBase, b, (i / b) | 0));
-	});
-var _elm_lang$core$Random$command = _elm_lang$core$Native_Platform.leaf('Random');
-var _elm_lang$core$Random$Generator = function (a) {
-	return {ctor: 'Generator', _0: a};
-};
-var _elm_lang$core$Random$list = F2(
-	function (n, _p9) {
-		var _p10 = _p9;
-		return _elm_lang$core$Random$Generator(
-			function (seed) {
-				return A4(
-					_elm_lang$core$Random$listHelp,
-					{ctor: '[]'},
-					n,
-					_p10._0,
-					seed);
-			});
-	});
-var _elm_lang$core$Random$map = F2(
-	function (func, _p11) {
-		var _p12 = _p11;
-		return _elm_lang$core$Random$Generator(
-			function (seed0) {
-				var _p13 = _p12._0(seed0);
-				var a = _p13._0;
-				var seed1 = _p13._1;
-				return {
-					ctor: '_Tuple2',
-					_0: func(a),
-					_1: seed1
-				};
-			});
-	});
-var _elm_lang$core$Random$map2 = F3(
-	function (func, _p15, _p14) {
-		var _p16 = _p15;
-		var _p17 = _p14;
-		return _elm_lang$core$Random$Generator(
-			function (seed0) {
-				var _p18 = _p16._0(seed0);
-				var a = _p18._0;
-				var seed1 = _p18._1;
-				var _p19 = _p17._0(seed1);
-				var b = _p19._0;
-				var seed2 = _p19._1;
-				return {
-					ctor: '_Tuple2',
-					_0: A2(func, a, b),
-					_1: seed2
-				};
-			});
-	});
-var _elm_lang$core$Random$pair = F2(
-	function (genA, genB) {
-		return A3(
-			_elm_lang$core$Random$map2,
-			F2(
-				function (v0, v1) {
-					return {ctor: '_Tuple2', _0: v0, _1: v1};
-				}),
-			genA,
-			genB);
-	});
-var _elm_lang$core$Random$map3 = F4(
-	function (func, _p22, _p21, _p20) {
-		var _p23 = _p22;
-		var _p24 = _p21;
-		var _p25 = _p20;
-		return _elm_lang$core$Random$Generator(
-			function (seed0) {
-				var _p26 = _p23._0(seed0);
-				var a = _p26._0;
-				var seed1 = _p26._1;
-				var _p27 = _p24._0(seed1);
-				var b = _p27._0;
-				var seed2 = _p27._1;
-				var _p28 = _p25._0(seed2);
-				var c = _p28._0;
-				var seed3 = _p28._1;
-				return {
-					ctor: '_Tuple2',
-					_0: A3(func, a, b, c),
-					_1: seed3
-				};
-			});
-	});
-var _elm_lang$core$Random$map4 = F5(
-	function (func, _p32, _p31, _p30, _p29) {
-		var _p33 = _p32;
-		var _p34 = _p31;
-		var _p35 = _p30;
-		var _p36 = _p29;
-		return _elm_lang$core$Random$Generator(
-			function (seed0) {
-				var _p37 = _p33._0(seed0);
-				var a = _p37._0;
-				var seed1 = _p37._1;
-				var _p38 = _p34._0(seed1);
-				var b = _p38._0;
-				var seed2 = _p38._1;
-				var _p39 = _p35._0(seed2);
-				var c = _p39._0;
-				var seed3 = _p39._1;
-				var _p40 = _p36._0(seed3);
-				var d = _p40._0;
-				var seed4 = _p40._1;
-				return {
-					ctor: '_Tuple2',
-					_0: A4(func, a, b, c, d),
-					_1: seed4
-				};
-			});
-	});
-var _elm_lang$core$Random$map5 = F6(
-	function (func, _p45, _p44, _p43, _p42, _p41) {
-		var _p46 = _p45;
-		var _p47 = _p44;
-		var _p48 = _p43;
-		var _p49 = _p42;
-		var _p50 = _p41;
-		return _elm_lang$core$Random$Generator(
-			function (seed0) {
-				var _p51 = _p46._0(seed0);
-				var a = _p51._0;
-				var seed1 = _p51._1;
-				var _p52 = _p47._0(seed1);
-				var b = _p52._0;
-				var seed2 = _p52._1;
-				var _p53 = _p48._0(seed2);
-				var c = _p53._0;
-				var seed3 = _p53._1;
-				var _p54 = _p49._0(seed3);
-				var d = _p54._0;
-				var seed4 = _p54._1;
-				var _p55 = _p50._0(seed4);
-				var e = _p55._0;
-				var seed5 = _p55._1;
-				return {
-					ctor: '_Tuple2',
-					_0: A5(func, a, b, c, d, e),
-					_1: seed5
-				};
-			});
-	});
-var _elm_lang$core$Random$andThen = F2(
-	function (callback, _p56) {
-		var _p57 = _p56;
-		return _elm_lang$core$Random$Generator(
-			function (seed) {
-				var _p58 = _p57._0(seed);
-				var result = _p58._0;
-				var newSeed = _p58._1;
-				var _p59 = callback(result);
-				var genB = _p59._0;
-				return genB(newSeed);
-			});
-	});
-var _elm_lang$core$Random$State = F2(
-	function (a, b) {
-		return {ctor: 'State', _0: a, _1: b};
-	});
-var _elm_lang$core$Random$initState = function (seed) {
-	var s = A2(_elm_lang$core$Basics$max, seed, 0 - seed);
-	var q = (s / (_elm_lang$core$Random$magicNum6 - 1)) | 0;
-	var s2 = A2(_elm_lang$core$Basics_ops['%'], q, _elm_lang$core$Random$magicNum7 - 1);
-	var s1 = A2(_elm_lang$core$Basics_ops['%'], s, _elm_lang$core$Random$magicNum6 - 1);
-	return A2(_elm_lang$core$Random$State, s1 + 1, s2 + 1);
-};
-var _elm_lang$core$Random$next = function (_p60) {
-	var _p61 = _p60;
-	var _p63 = _p61._1;
-	var _p62 = _p61._0;
-	var k2 = (_p63 / _elm_lang$core$Random$magicNum3) | 0;
-	var rawState2 = (_elm_lang$core$Random$magicNum4 * (_p63 - (k2 * _elm_lang$core$Random$magicNum3))) - (k2 * _elm_lang$core$Random$magicNum5);
-	var newState2 = (_elm_lang$core$Native_Utils.cmp(rawState2, 0) < 0) ? (rawState2 + _elm_lang$core$Random$magicNum7) : rawState2;
-	var k1 = (_p62 / _elm_lang$core$Random$magicNum1) | 0;
-	var rawState1 = (_elm_lang$core$Random$magicNum0 * (_p62 - (k1 * _elm_lang$core$Random$magicNum1))) - (k1 * _elm_lang$core$Random$magicNum2);
-	var newState1 = (_elm_lang$core$Native_Utils.cmp(rawState1, 0) < 0) ? (rawState1 + _elm_lang$core$Random$magicNum6) : rawState1;
-	var z = newState1 - newState2;
-	var newZ = (_elm_lang$core$Native_Utils.cmp(z, 1) < 0) ? (z + _elm_lang$core$Random$magicNum8) : z;
-	return {
-		ctor: '_Tuple2',
-		_0: newZ,
-		_1: A2(_elm_lang$core$Random$State, newState1, newState2)
-	};
-};
-var _elm_lang$core$Random$split = function (_p64) {
-	var _p65 = _p64;
-	var _p68 = _p65._1;
-	var _p67 = _p65._0;
-	var _p66 = _elm_lang$core$Tuple$second(
-		_elm_lang$core$Random$next(_p65));
-	var t1 = _p66._0;
-	var t2 = _p66._1;
-	var new_s2 = _elm_lang$core$Native_Utils.eq(_p68, 1) ? (_elm_lang$core$Random$magicNum7 - 1) : (_p68 - 1);
-	var new_s1 = _elm_lang$core$Native_Utils.eq(_p67, _elm_lang$core$Random$magicNum6 - 1) ? 1 : (_p67 + 1);
-	return {
-		ctor: '_Tuple2',
-		_0: A2(_elm_lang$core$Random$State, new_s1, t2),
-		_1: A2(_elm_lang$core$Random$State, t1, new_s2)
-	};
-};
-var _elm_lang$core$Random$Seed = function (a) {
-	return {ctor: 'Seed', _0: a};
-};
-var _elm_lang$core$Random$int = F2(
-	function (a, b) {
-		return _elm_lang$core$Random$Generator(
-			function (_p69) {
-				var _p70 = _p69;
-				var _p75 = _p70._0;
-				var base = 2147483561;
-				var f = F3(
-					function (n, acc, state) {
-						f:
-						while (true) {
-							var _p71 = n;
-							if (_p71 === 0) {
-								return {ctor: '_Tuple2', _0: acc, _1: state};
-							} else {
-								var _p72 = _p75.next(state);
-								var x = _p72._0;
-								var nextState = _p72._1;
-								var _v27 = n - 1,
-									_v28 = x + (acc * base),
-									_v29 = nextState;
-								n = _v27;
-								acc = _v28;
-								state = _v29;
-								continue f;
-							}
-						}
-					});
-				var _p73 = (_elm_lang$core$Native_Utils.cmp(a, b) < 0) ? {ctor: '_Tuple2', _0: a, _1: b} : {ctor: '_Tuple2', _0: b, _1: a};
-				var lo = _p73._0;
-				var hi = _p73._1;
-				var k = (hi - lo) + 1;
-				var n = A2(_elm_lang$core$Random$iLogBase, base, k);
-				var _p74 = A3(f, n, 1, _p75.state);
-				var v = _p74._0;
-				var nextState = _p74._1;
-				return {
-					ctor: '_Tuple2',
-					_0: lo + A2(_elm_lang$core$Basics_ops['%'], v, k),
-					_1: _elm_lang$core$Random$Seed(
-						_elm_lang$core$Native_Utils.update(
-							_p75,
-							{state: nextState}))
-				};
-			});
-	});
-var _elm_lang$core$Random$bool = A2(
-	_elm_lang$core$Random$map,
-	F2(
-		function (x, y) {
-			return _elm_lang$core$Native_Utils.eq(x, y);
-		})(1),
-	A2(_elm_lang$core$Random$int, 0, 1));
-var _elm_lang$core$Random$float = F2(
-	function (a, b) {
-		return _elm_lang$core$Random$Generator(
-			function (seed) {
-				var _p76 = A2(
-					_elm_lang$core$Random$step,
-					A2(_elm_lang$core$Random$int, _elm_lang$core$Random$minInt, _elm_lang$core$Random$maxInt),
-					seed);
-				var number = _p76._0;
-				var newSeed = _p76._1;
-				var negativeOneToOne = _elm_lang$core$Basics$toFloat(number) / _elm_lang$core$Basics$toFloat(_elm_lang$core$Random$maxInt - _elm_lang$core$Random$minInt);
-				var _p77 = (_elm_lang$core$Native_Utils.cmp(a, b) < 0) ? {ctor: '_Tuple2', _0: a, _1: b} : {ctor: '_Tuple2', _0: b, _1: a};
-				var lo = _p77._0;
-				var hi = _p77._1;
-				var scaled = ((lo + hi) / 2) + ((hi - lo) * negativeOneToOne);
-				return {ctor: '_Tuple2', _0: scaled, _1: newSeed};
-			});
-	});
-var _elm_lang$core$Random$initialSeed = function (n) {
-	return _elm_lang$core$Random$Seed(
-		{
-			state: _elm_lang$core$Random$initState(n),
-			next: _elm_lang$core$Random$next,
-			split: _elm_lang$core$Random$split,
-			range: _elm_lang$core$Random$range
-		});
-};
-var _elm_lang$core$Random$init = A2(
-	_elm_lang$core$Task$andThen,
-	function (t) {
-		return _elm_lang$core$Task$succeed(
-			_elm_lang$core$Random$initialSeed(
-				_elm_lang$core$Basics$round(t)));
-	},
-	_elm_lang$core$Time$now);
-var _elm_lang$core$Random$Generate = function (a) {
-	return {ctor: 'Generate', _0: a};
-};
-var _elm_lang$core$Random$generate = F2(
-	function (tagger, generator) {
-		return _elm_lang$core$Random$command(
-			_elm_lang$core$Random$Generate(
-				A2(_elm_lang$core$Random$map, tagger, generator)));
-	});
-var _elm_lang$core$Random$cmdMap = F2(
-	function (func, _p78) {
-		var _p79 = _p78;
-		return _elm_lang$core$Random$Generate(
-			A2(_elm_lang$core$Random$map, func, _p79._0));
-	});
-_elm_lang$core$Native_Platform.effectManagers['Random'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Random$init, onEffects: _elm_lang$core$Random$onEffects, onSelfMsg: _elm_lang$core$Random$onSelfMsg, tag: 'cmd', cmdMap: _elm_lang$core$Random$cmdMap};
 
 var _elm_lang$core$Regex$split = _elm_lang$core$Native_Regex.split;
 var _elm_lang$core$Regex$replace = _elm_lang$core$Native_Regex.replace;
@@ -10008,6 +9780,567 @@ var _elm_lang$mouse$Mouse$subMap = F2(
 			});
 	});
 _elm_lang$core$Native_Platform.effectManagers['Mouse'] = {pkg: 'elm-lang/mouse', init: _elm_lang$mouse$Mouse$init, onEffects: _elm_lang$mouse$Mouse$onEffects, onSelfMsg: _elm_lang$mouse$Mouse$onSelfMsg, tag: 'sub', subMap: _elm_lang$mouse$Mouse$subMap};
+
+var _mgold$elm_random_pcg$Random_Pcg$toJson = function (_p0) {
+	var _p1 = _p0;
+	return _elm_lang$core$Json_Encode$list(
+		{
+			ctor: '::',
+			_0: _elm_lang$core$Json_Encode$int(_p1._0),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$core$Json_Encode$int(_p1._1),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _mgold$elm_random_pcg$Random_Pcg$mul32 = F2(
+	function (a, b) {
+		var bl = b & 65535;
+		var bh = 65535 & (b >>> 16);
+		var al = a & 65535;
+		var ah = 65535 & (a >>> 16);
+		return 0 | ((al * bl) + ((((ah * bl) + (al * bh)) << 16) >>> 0));
+	});
+var _mgold$elm_random_pcg$Random_Pcg$listHelp = F4(
+	function (list, n, generate, seed) {
+		listHelp:
+		while (true) {
+			if (_elm_lang$core$Native_Utils.cmp(n, 1) < 0) {
+				return {ctor: '_Tuple2', _0: list, _1: seed};
+			} else {
+				var _p2 = generate(seed);
+				var value = _p2._0;
+				var newSeed = _p2._1;
+				var _v1 = {ctor: '::', _0: value, _1: list},
+					_v2 = n - 1,
+					_v3 = generate,
+					_v4 = newSeed;
+				list = _v1;
+				n = _v2;
+				generate = _v3;
+				seed = _v4;
+				continue listHelp;
+			}
+		}
+	});
+var _mgold$elm_random_pcg$Random_Pcg$minInt = -2147483648;
+var _mgold$elm_random_pcg$Random_Pcg$maxInt = 2147483647;
+var _mgold$elm_random_pcg$Random_Pcg$bit27 = 1.34217728e8;
+var _mgold$elm_random_pcg$Random_Pcg$bit53 = 9.007199254740992e15;
+var _mgold$elm_random_pcg$Random_Pcg$peel = function (_p3) {
+	var _p4 = _p3;
+	var _p5 = _p4._0;
+	var word = (_p5 ^ (_p5 >>> ((_p5 >>> 28) + 4))) * 277803737;
+	return ((word >>> 22) ^ word) >>> 0;
+};
+var _mgold$elm_random_pcg$Random_Pcg$step = F2(
+	function (_p6, seed) {
+		var _p7 = _p6;
+		return _p7._0(seed);
+	});
+var _mgold$elm_random_pcg$Random_Pcg$retry = F3(
+	function (generator, predicate, seed) {
+		retry:
+		while (true) {
+			var _p8 = A2(_mgold$elm_random_pcg$Random_Pcg$step, generator, seed);
+			var candidate = _p8._0;
+			var newSeed = _p8._1;
+			if (predicate(candidate)) {
+				return {ctor: '_Tuple2', _0: candidate, _1: newSeed};
+			} else {
+				var _v7 = generator,
+					_v8 = predicate,
+					_v9 = newSeed;
+				generator = _v7;
+				predicate = _v8;
+				seed = _v9;
+				continue retry;
+			}
+		}
+	});
+var _mgold$elm_random_pcg$Random_Pcg$Generator = function (a) {
+	return {ctor: 'Generator', _0: a};
+};
+var _mgold$elm_random_pcg$Random_Pcg$list = F2(
+	function (n, _p9) {
+		var _p10 = _p9;
+		return _mgold$elm_random_pcg$Random_Pcg$Generator(
+			function (seed) {
+				return A4(
+					_mgold$elm_random_pcg$Random_Pcg$listHelp,
+					{ctor: '[]'},
+					n,
+					_p10._0,
+					seed);
+			});
+	});
+var _mgold$elm_random_pcg$Random_Pcg$constant = function (value) {
+	return _mgold$elm_random_pcg$Random_Pcg$Generator(
+		function (seed) {
+			return {ctor: '_Tuple2', _0: value, _1: seed};
+		});
+};
+var _mgold$elm_random_pcg$Random_Pcg$map = F2(
+	function (func, _p11) {
+		var _p12 = _p11;
+		return _mgold$elm_random_pcg$Random_Pcg$Generator(
+			function (seed0) {
+				var _p13 = _p12._0(seed0);
+				var a = _p13._0;
+				var seed1 = _p13._1;
+				return {
+					ctor: '_Tuple2',
+					_0: func(a),
+					_1: seed1
+				};
+			});
+	});
+var _mgold$elm_random_pcg$Random_Pcg$map2 = F3(
+	function (func, _p15, _p14) {
+		var _p16 = _p15;
+		var _p17 = _p14;
+		return _mgold$elm_random_pcg$Random_Pcg$Generator(
+			function (seed0) {
+				var _p18 = _p16._0(seed0);
+				var a = _p18._0;
+				var seed1 = _p18._1;
+				var _p19 = _p17._0(seed1);
+				var b = _p19._0;
+				var seed2 = _p19._1;
+				return {
+					ctor: '_Tuple2',
+					_0: A2(func, a, b),
+					_1: seed2
+				};
+			});
+	});
+var _mgold$elm_random_pcg$Random_Pcg$pair = F2(
+	function (genA, genB) {
+		return A3(
+			_mgold$elm_random_pcg$Random_Pcg$map2,
+			F2(
+				function (v0, v1) {
+					return {ctor: '_Tuple2', _0: v0, _1: v1};
+				}),
+			genA,
+			genB);
+	});
+var _mgold$elm_random_pcg$Random_Pcg$andMap = _mgold$elm_random_pcg$Random_Pcg$map2(
+	F2(
+		function (x, y) {
+			return x(y);
+		}));
+var _mgold$elm_random_pcg$Random_Pcg$map3 = F4(
+	function (func, _p22, _p21, _p20) {
+		var _p23 = _p22;
+		var _p24 = _p21;
+		var _p25 = _p20;
+		return _mgold$elm_random_pcg$Random_Pcg$Generator(
+			function (seed0) {
+				var _p26 = _p23._0(seed0);
+				var a = _p26._0;
+				var seed1 = _p26._1;
+				var _p27 = _p24._0(seed1);
+				var b = _p27._0;
+				var seed2 = _p27._1;
+				var _p28 = _p25._0(seed2);
+				var c = _p28._0;
+				var seed3 = _p28._1;
+				return {
+					ctor: '_Tuple2',
+					_0: A3(func, a, b, c),
+					_1: seed3
+				};
+			});
+	});
+var _mgold$elm_random_pcg$Random_Pcg$map4 = F5(
+	function (func, _p32, _p31, _p30, _p29) {
+		var _p33 = _p32;
+		var _p34 = _p31;
+		var _p35 = _p30;
+		var _p36 = _p29;
+		return _mgold$elm_random_pcg$Random_Pcg$Generator(
+			function (seed0) {
+				var _p37 = _p33._0(seed0);
+				var a = _p37._0;
+				var seed1 = _p37._1;
+				var _p38 = _p34._0(seed1);
+				var b = _p38._0;
+				var seed2 = _p38._1;
+				var _p39 = _p35._0(seed2);
+				var c = _p39._0;
+				var seed3 = _p39._1;
+				var _p40 = _p36._0(seed3);
+				var d = _p40._0;
+				var seed4 = _p40._1;
+				return {
+					ctor: '_Tuple2',
+					_0: A4(func, a, b, c, d),
+					_1: seed4
+				};
+			});
+	});
+var _mgold$elm_random_pcg$Random_Pcg$map5 = F6(
+	function (func, _p45, _p44, _p43, _p42, _p41) {
+		var _p46 = _p45;
+		var _p47 = _p44;
+		var _p48 = _p43;
+		var _p49 = _p42;
+		var _p50 = _p41;
+		return _mgold$elm_random_pcg$Random_Pcg$Generator(
+			function (seed0) {
+				var _p51 = _p46._0(seed0);
+				var a = _p51._0;
+				var seed1 = _p51._1;
+				var _p52 = _p47._0(seed1);
+				var b = _p52._0;
+				var seed2 = _p52._1;
+				var _p53 = _p48._0(seed2);
+				var c = _p53._0;
+				var seed3 = _p53._1;
+				var _p54 = _p49._0(seed3);
+				var d = _p54._0;
+				var seed4 = _p54._1;
+				var _p55 = _p50._0(seed4);
+				var e = _p55._0;
+				var seed5 = _p55._1;
+				return {
+					ctor: '_Tuple2',
+					_0: A5(func, a, b, c, d, e),
+					_1: seed5
+				};
+			});
+	});
+var _mgold$elm_random_pcg$Random_Pcg$andThen = F2(
+	function (callback, _p56) {
+		var _p57 = _p56;
+		return _mgold$elm_random_pcg$Random_Pcg$Generator(
+			function (seed) {
+				var _p58 = _p57._0(seed);
+				var result = _p58._0;
+				var newSeed = _p58._1;
+				var _p59 = callback(result);
+				var generateB = _p59._0;
+				return generateB(newSeed);
+			});
+	});
+var _mgold$elm_random_pcg$Random_Pcg$maybe = F2(
+	function (genBool, genA) {
+		return A2(
+			_mgold$elm_random_pcg$Random_Pcg$andThen,
+			function (b) {
+				return b ? A2(_mgold$elm_random_pcg$Random_Pcg$map, _elm_lang$core$Maybe$Just, genA) : _mgold$elm_random_pcg$Random_Pcg$constant(_elm_lang$core$Maybe$Nothing);
+			},
+			genBool);
+	});
+var _mgold$elm_random_pcg$Random_Pcg$filter = F2(
+	function (predicate, generator) {
+		return _mgold$elm_random_pcg$Random_Pcg$Generator(
+			A2(_mgold$elm_random_pcg$Random_Pcg$retry, generator, predicate));
+	});
+var _mgold$elm_random_pcg$Random_Pcg$Seed = F2(
+	function (a, b) {
+		return {ctor: 'Seed', _0: a, _1: b};
+	});
+var _mgold$elm_random_pcg$Random_Pcg$next = function (_p60) {
+	var _p61 = _p60;
+	var _p62 = _p61._1;
+	return A2(_mgold$elm_random_pcg$Random_Pcg$Seed, ((_p61._0 * 1664525) + _p62) >>> 0, _p62);
+};
+var _mgold$elm_random_pcg$Random_Pcg$initialSeed = function (x) {
+	var _p63 = _mgold$elm_random_pcg$Random_Pcg$next(
+		A2(_mgold$elm_random_pcg$Random_Pcg$Seed, 0, 1013904223));
+	var state1 = _p63._0;
+	var incr = _p63._1;
+	var state2 = (state1 + x) >>> 0;
+	return _mgold$elm_random_pcg$Random_Pcg$next(
+		A2(_mgold$elm_random_pcg$Random_Pcg$Seed, state2, incr));
+};
+var _mgold$elm_random_pcg$Random_Pcg$generate = F2(
+	function (toMsg, generator) {
+		return A2(
+			_elm_lang$core$Task$perform,
+			toMsg,
+			A2(
+				_elm_lang$core$Task$map,
+				function (_p64) {
+					return _elm_lang$core$Tuple$first(
+						A2(
+							_mgold$elm_random_pcg$Random_Pcg$step,
+							generator,
+							_mgold$elm_random_pcg$Random_Pcg$initialSeed(
+								_elm_lang$core$Basics$round(_p64))));
+				},
+				_elm_lang$core$Time$now));
+	});
+var _mgold$elm_random_pcg$Random_Pcg$int = F2(
+	function (a, b) {
+		return _mgold$elm_random_pcg$Random_Pcg$Generator(
+			function (seed0) {
+				var _p65 = (_elm_lang$core$Native_Utils.cmp(a, b) < 0) ? {ctor: '_Tuple2', _0: a, _1: b} : {ctor: '_Tuple2', _0: b, _1: a};
+				var lo = _p65._0;
+				var hi = _p65._1;
+				var range = (hi - lo) + 1;
+				if (_elm_lang$core$Native_Utils.eq((range - 1) & range, 0)) {
+					return {
+						ctor: '_Tuple2',
+						_0: (((range - 1) & _mgold$elm_random_pcg$Random_Pcg$peel(seed0)) >>> 0) + lo,
+						_1: _mgold$elm_random_pcg$Random_Pcg$next(seed0)
+					};
+				} else {
+					var threshhold = A2(_elm_lang$core$Basics$rem, (0 - range) >>> 0, range) >>> 0;
+					var accountForBias = function (seed) {
+						accountForBias:
+						while (true) {
+							var seedN = _mgold$elm_random_pcg$Random_Pcg$next(seed);
+							var x = _mgold$elm_random_pcg$Random_Pcg$peel(seed);
+							if (_elm_lang$core$Native_Utils.cmp(x, threshhold) < 0) {
+								var _v28 = seedN;
+								seed = _v28;
+								continue accountForBias;
+							} else {
+								return {
+									ctor: '_Tuple2',
+									_0: A2(_elm_lang$core$Basics$rem, x, range) + lo,
+									_1: seedN
+								};
+							}
+						}
+					};
+					return accountForBias(seed0);
+				}
+			});
+	});
+var _mgold$elm_random_pcg$Random_Pcg$bool = A2(
+	_mgold$elm_random_pcg$Random_Pcg$map,
+	F2(
+		function (x, y) {
+			return _elm_lang$core$Native_Utils.eq(x, y);
+		})(1),
+	A2(_mgold$elm_random_pcg$Random_Pcg$int, 0, 1));
+var _mgold$elm_random_pcg$Random_Pcg$choice = F2(
+	function (x, y) {
+		return A2(
+			_mgold$elm_random_pcg$Random_Pcg$map,
+			function (b) {
+				return b ? x : y;
+			},
+			_mgold$elm_random_pcg$Random_Pcg$bool);
+	});
+var _mgold$elm_random_pcg$Random_Pcg$oneIn = function (n) {
+	return A2(
+		_mgold$elm_random_pcg$Random_Pcg$map,
+		F2(
+			function (x, y) {
+				return _elm_lang$core$Native_Utils.eq(x, y);
+			})(1),
+		A2(_mgold$elm_random_pcg$Random_Pcg$int, 1, n));
+};
+var _mgold$elm_random_pcg$Random_Pcg$sample = function () {
+	var find = F2(
+		function (k, ys) {
+			find:
+			while (true) {
+				var _p66 = ys;
+				if (_p66.ctor === '[]') {
+					return _elm_lang$core$Maybe$Nothing;
+				} else {
+					if (_elm_lang$core$Native_Utils.eq(k, 0)) {
+						return _elm_lang$core$Maybe$Just(_p66._0);
+					} else {
+						var _v30 = k - 1,
+							_v31 = _p66._1;
+						k = _v30;
+						ys = _v31;
+						continue find;
+					}
+				}
+			}
+		});
+	return function (xs) {
+		return A2(
+			_mgold$elm_random_pcg$Random_Pcg$map,
+			function (i) {
+				return A2(find, i, xs);
+			},
+			A2(
+				_mgold$elm_random_pcg$Random_Pcg$int,
+				0,
+				_elm_lang$core$List$length(xs) - 1));
+	};
+}();
+var _mgold$elm_random_pcg$Random_Pcg$float = F2(
+	function (min, max) {
+		return _mgold$elm_random_pcg$Random_Pcg$Generator(
+			function (seed0) {
+				var range = _elm_lang$core$Basics$abs(max - min);
+				var n0 = _mgold$elm_random_pcg$Random_Pcg$peel(seed0);
+				var hi = _elm_lang$core$Basics$toFloat(67108863 & n0) * 1.0;
+				var seed1 = _mgold$elm_random_pcg$Random_Pcg$next(seed0);
+				var n1 = _mgold$elm_random_pcg$Random_Pcg$peel(seed1);
+				var lo = _elm_lang$core$Basics$toFloat(134217727 & n1) * 1.0;
+				var val = ((hi * _mgold$elm_random_pcg$Random_Pcg$bit27) + lo) / _mgold$elm_random_pcg$Random_Pcg$bit53;
+				var scaled = (val * range) + min;
+				return {
+					ctor: '_Tuple2',
+					_0: scaled,
+					_1: _mgold$elm_random_pcg$Random_Pcg$next(seed1)
+				};
+			});
+	});
+var _mgold$elm_random_pcg$Random_Pcg$frequency = function (pairs) {
+	var pick = F2(
+		function (choices, n) {
+			pick:
+			while (true) {
+				var _p67 = choices;
+				if ((_p67.ctor === '::') && (_p67._0.ctor === '_Tuple2')) {
+					var _p68 = _p67._0._0;
+					if (_elm_lang$core$Native_Utils.cmp(n, _p68) < 1) {
+						return _p67._0._1;
+					} else {
+						var _v33 = _p67._1,
+							_v34 = n - _p68;
+						choices = _v33;
+						n = _v34;
+						continue pick;
+					}
+				} else {
+					return _elm_lang$core$Native_Utils.crashCase(
+						'Random.Pcg',
+						{
+							start: {line: 682, column: 13},
+							end: {line: 690, column: 77}
+						},
+						_p67)('Empty list passed to Random.Pcg.frequency!');
+				}
+			}
+		});
+	var total = _elm_lang$core$List$sum(
+		A2(
+			_elm_lang$core$List$map,
+			function (_p70) {
+				return _elm_lang$core$Basics$abs(
+					_elm_lang$core$Tuple$first(_p70));
+			},
+			pairs));
+	return A2(
+		_mgold$elm_random_pcg$Random_Pcg$andThen,
+		pick(pairs),
+		A2(_mgold$elm_random_pcg$Random_Pcg$float, 0, total));
+};
+var _mgold$elm_random_pcg$Random_Pcg$choices = function (gens) {
+	return _mgold$elm_random_pcg$Random_Pcg$frequency(
+		A2(
+			_elm_lang$core$List$map,
+			function (g) {
+				return {ctor: '_Tuple2', _0: 1, _1: g};
+			},
+			gens));
+};
+var _mgold$elm_random_pcg$Random_Pcg$independentSeed = _mgold$elm_random_pcg$Random_Pcg$Generator(
+	function (seed0) {
+		var gen = A2(_mgold$elm_random_pcg$Random_Pcg$int, 0, 4294967295);
+		var _p71 = A2(
+			_mgold$elm_random_pcg$Random_Pcg$step,
+			A4(
+				_mgold$elm_random_pcg$Random_Pcg$map3,
+				F3(
+					function (v0, v1, v2) {
+						return {ctor: '_Tuple3', _0: v0, _1: v1, _2: v2};
+					}),
+				gen,
+				gen,
+				gen),
+			seed0);
+		var state = _p71._0._0;
+		var b = _p71._0._1;
+		var c = _p71._0._2;
+		var seed1 = _p71._1;
+		var incr = 1 | (b ^ c);
+		return {
+			ctor: '_Tuple2',
+			_0: seed1,
+			_1: _mgold$elm_random_pcg$Random_Pcg$next(
+				A2(_mgold$elm_random_pcg$Random_Pcg$Seed, state, incr))
+		};
+	});
+var _mgold$elm_random_pcg$Random_Pcg$fastForward = F2(
+	function (delta0, _p72) {
+		var _p73 = _p72;
+		var _p76 = _p73._1;
+		var helper = F6(
+			function (accMult, accPlus, curMult, curPlus, delta, repeat) {
+				helper:
+				while (true) {
+					var newDelta = delta >>> 1;
+					var curMult_ = A2(_mgold$elm_random_pcg$Random_Pcg$mul32, curMult, curMult);
+					var curPlus_ = A2(_mgold$elm_random_pcg$Random_Pcg$mul32, curMult + 1, curPlus);
+					var _p74 = _elm_lang$core$Native_Utils.eq(delta & 1, 1) ? {
+						ctor: '_Tuple2',
+						_0: A2(_mgold$elm_random_pcg$Random_Pcg$mul32, accMult, curMult),
+						_1: (A2(_mgold$elm_random_pcg$Random_Pcg$mul32, accPlus, curMult) + curPlus) >>> 0
+					} : {ctor: '_Tuple2', _0: accMult, _1: accPlus};
+					var accMult_ = _p74._0;
+					var accPlus_ = _p74._1;
+					if (_elm_lang$core$Native_Utils.eq(newDelta, 0)) {
+						if ((_elm_lang$core$Native_Utils.cmp(delta0, 0) < 0) && repeat) {
+							var _v36 = accMult_,
+								_v37 = accPlus_,
+								_v38 = curMult_,
+								_v39 = curPlus_,
+								_v40 = -1,
+								_v41 = false;
+							accMult = _v36;
+							accPlus = _v37;
+							curMult = _v38;
+							curPlus = _v39;
+							delta = _v40;
+							repeat = _v41;
+							continue helper;
+						} else {
+							return {ctor: '_Tuple2', _0: accMult_, _1: accPlus_};
+						}
+					} else {
+						var _v42 = accMult_,
+							_v43 = accPlus_,
+							_v44 = curMult_,
+							_v45 = curPlus_,
+							_v46 = newDelta,
+							_v47 = repeat;
+						accMult = _v42;
+						accPlus = _v43;
+						curMult = _v44;
+						curPlus = _v45;
+						delta = _v46;
+						repeat = _v47;
+						continue helper;
+					}
+				}
+			});
+		var _p75 = A6(helper, 1, 0, 1664525, _p76, delta0, true);
+		var accMultFinal = _p75._0;
+		var accPlusFinal = _p75._1;
+		return A2(
+			_mgold$elm_random_pcg$Random_Pcg$Seed,
+			(A2(_mgold$elm_random_pcg$Random_Pcg$mul32, accMultFinal, _p73._0) + accPlusFinal) >>> 0,
+			_p76);
+	});
+var _mgold$elm_random_pcg$Random_Pcg$fromJson = _elm_lang$core$Json_Decode$oneOf(
+	{
+		ctor: '::',
+		_0: A3(
+			_elm_lang$core$Json_Decode$map2,
+			_mgold$elm_random_pcg$Random_Pcg$Seed,
+			A2(_elm_lang$core$Json_Decode$index, 0, _elm_lang$core$Json_Decode$int),
+			A2(_elm_lang$core$Json_Decode$index, 1, _elm_lang$core$Json_Decode$int)),
+		_1: {
+			ctor: '::',
+			_0: A2(_elm_lang$core$Json_Decode$map, _mgold$elm_random_pcg$Random_Pcg$initialSeed, _elm_lang$core$Json_Decode$int),
+			_1: {ctor: '[]'}
+		}
+	});
 
 var _rtfeldman$elm_css_util$Css_Helpers$toCssIdentifier = function (identifier) {
 	return A4(
@@ -14770,28 +15103,63 @@ var _rtfeldman$elm_css_helpers$Html_CssHelpers$Namespace = F4(
 		return {$class: a, classList: b, id: c, name: d};
 	});
 
-var _user$project$Matrix$reverseArray = function (anArray) {
+var _zwilias$tenten$Matrix$reverseArray = function (anArray) {
 	var length = _elm_lang$core$Array$length(anArray);
 	var getMatchingElement = function (x) {
-		return A2(_elm_community$array_extra$Array_Extra$getUnsafe, length - x, anArray);
+		return A2(_elm_community$array_extra$Array_Extra$getUnsafe, (length - x) - 1, anArray);
 	};
 	return A2(_elm_lang$core$Array$initialize, length, getMatchingElement);
 };
-var _user$project$Matrix$flipHorizontal = _elm_lang$core$Array$map(_user$project$Matrix$reverseArray);
-var _user$project$Matrix$flipVertical = _user$project$Matrix$reverseArray;
-var _user$project$Matrix$map = F2(
+var _zwilias$tenten$Matrix$flipHorizontal = _elm_lang$core$Array$map(_zwilias$tenten$Matrix$reverseArray);
+var _zwilias$tenten$Matrix$flipVertical = _zwilias$tenten$Matrix$reverseArray;
+var _zwilias$tenten$Matrix$arrayAll = F2(
+	function (predicate, anArray) {
+		return A2(
+			_elm_lang$core$List$all,
+			predicate,
+			_elm_lang$core$Array$toList(anArray));
+	});
+var _zwilias$tenten$Matrix$toList = function (matrix) {
+	return A2(
+		_elm_lang$core$List$map,
+		_elm_lang$core$Array$toList,
+		_elm_lang$core$Array$toList(matrix));
+};
+var _zwilias$tenten$Matrix$foldl = F3(
+	function (accumulator, initial, matrix) {
+		return A3(
+			_elm_lang$core$Array$foldl,
+			F2(
+				function (row, acc) {
+					return A3(_elm_lang$core$Array$foldl, accumulator, acc, row);
+				}),
+			initial,
+			matrix);
+	});
+var _zwilias$tenten$Matrix$map = F2(
 	function (operator, matrix) {
 		return A2(
-			_elm_lang$core$List$map,
-			function (aRow) {
-				return A2(
-					_elm_lang$core$List$map,
-					operator,
-					_elm_lang$core$Array$toList(aRow));
-			},
-			_elm_lang$core$Array$toList(matrix));
+			_elm_lang$core$Array$map,
+			_elm_lang$core$Array$map(operator),
+			matrix);
 	});
-var _user$project$Matrix$get = F3(
+var _zwilias$tenten$Matrix$mapPosition = F2(
+	function (operator, aMatrix) {
+		return A2(
+			_elm_lang$core$Array$indexedMap,
+			F2(
+				function (y, row) {
+					return A2(
+						_elm_lang$core$Array$indexedMap,
+						F2(
+							function (x, elem) {
+								return A3(operator, x, y, elem);
+							}),
+						row);
+				}),
+			aMatrix);
+	});
+var _zwilias$tenten$Matrix$get = F3(
 	function (y, x, matrix) {
 		return _elm_community$maybe_extra$Maybe_Extra$join(
 			A2(
@@ -14799,7 +15167,22 @@ var _user$project$Matrix$get = F3(
 				_elm_lang$core$Array$get(x),
 				A2(_elm_lang$core$Array$get, y, matrix)));
 	});
-var _user$project$Matrix$column = F2(
+var _zwilias$tenten$Matrix$unsafeGet = F3(
+	function (y, x, matrix) {
+		var _p0 = A3(_zwilias$tenten$Matrix$get, y, x, matrix);
+		if (_p0.ctor === 'Nothing') {
+			return _elm_lang$core$Native_Utils.crashCase(
+				'Matrix',
+				{
+					start: {line: 168, column: 5},
+					end: {line: 173, column: 16}
+				},
+				_p0)('k thx bye');
+		} else {
+			return _p0._0;
+		}
+	});
+var _zwilias$tenten$Matrix$column = F2(
 	function (x, matrix) {
 		return _elm_community$maybe_extra$Maybe_Extra$combine(
 			_elm_lang$core$Array$toList(
@@ -14808,14 +15191,14 @@ var _user$project$Matrix$column = F2(
 					_elm_lang$core$Array$get(x),
 					matrix)));
 	});
-var _user$project$Matrix$row = F2(
+var _zwilias$tenten$Matrix$row = F2(
 	function (y, matrix) {
 		return A2(
 			_elm_lang$core$Maybe$map,
 			_elm_lang$core$Array$toList,
 			A2(_elm_lang$core$Array$get, y, matrix));
 	});
-var _user$project$Matrix$create = F3(
+var _zwilias$tenten$Matrix$create = F3(
 	function (width, height, initialValue) {
 		var initRow = function (y) {
 			return A2(
@@ -14827,16 +15210,132 @@ var _user$project$Matrix$create = F3(
 		};
 		return A2(_elm_lang$core$Array$initialize, height, initRow);
 	});
-var _user$project$Matrix$empty = _elm_lang$core$Array$empty;
+var _zwilias$tenten$Matrix$empty = _elm_lang$core$Array$empty;
+var _zwilias$tenten$Matrix$overlayMaybe = F4(
+	function (over, offsetX, offsetY, on) {
+		return A2(
+			_zwilias$tenten$Matrix$mapPosition,
+			F3(
+				function (x, y, original) {
+					var _p2 = _elm_community$maybe_extra$Maybe_Extra$join(
+						A3(_zwilias$tenten$Matrix$get, y - offsetY, x - offsetX, over));
+					if (_p2.ctor === 'Nothing') {
+						return _elm_community$maybe_extra$Maybe_Extra$join(
+							_elm_lang$core$Maybe$Just(original));
+					} else {
+						return _elm_lang$core$Maybe$Just(_p2._0);
+					}
+				}),
+			on);
+	});
+var _zwilias$tenten$Matrix$Dimension = F2(
+	function (a, b) {
+		return {width: a, height: b};
+	});
+var _zwilias$tenten$Matrix$dimension = function (aMatrix) {
+	var _p3 = _elm_lang$core$Array$length(aMatrix);
+	if (_p3 === 0) {
+		return A2(_zwilias$tenten$Matrix$Dimension, 0, 0);
+	} else {
+		return A2(
+			_zwilias$tenten$Matrix$Dimension,
+			_elm_lang$core$Array$length(
+				A2(_elm_community$array_extra$Array_Extra$getUnsafe, 0, aMatrix)),
+			_p3);
+	}
+};
+var _zwilias$tenten$Matrix$consistentOrNothing = function (aMatrix) {
+	var _p4 = _zwilias$tenten$Matrix$dimension(aMatrix);
+	var width = _p4.width;
+	var height = _p4.height;
+	return _elm_lang$core$Native_Utils.eq(height, 0) ? _elm_lang$core$Maybe$Just(aMatrix) : (A2(
+		_zwilias$tenten$Matrix$arrayAll,
+		function (row) {
+			return _elm_lang$core$Native_Utils.eq(
+				_elm_lang$core$Array$length(row),
+				width);
+		},
+		aMatrix) ? _elm_lang$core$Maybe$Just(aMatrix) : _elm_lang$core$Maybe$Nothing);
+};
+var _zwilias$tenten$Matrix$fromList = function (aListOfList) {
+	return _zwilias$tenten$Matrix$consistentOrNothing(
+		A2(
+			_elm_lang$core$Array$map,
+			_elm_lang$core$Array$fromList,
+			_elm_lang$core$Array$fromList(aListOfList)));
+};
+var _zwilias$tenten$Matrix$unsafeFromList = function (aListOfLists) {
+	var _p5 = _zwilias$tenten$Matrix$fromList(aListOfLists);
+	if (_p5.ctor === 'Nothing') {
+		return _elm_lang$core$Native_Utils.crashCase(
+			'Matrix',
+			{
+				start: {line: 253, column: 5},
+				end: {line: 258, column: 20}
+			},
+			_p5)('Nein');
+	} else {
+		return _p5._0;
+	}
+};
+var _zwilias$tenten$Matrix$transpose = function (aMatrix) {
+	var _p7 = _zwilias$tenten$Matrix$dimension(aMatrix);
+	var width = _p7.width;
+	var height = _p7.height;
+	return A3(
+		_zwilias$tenten$Matrix$create,
+		height,
+		width,
+		F2(
+			function (x, y) {
+				return A3(_zwilias$tenten$Matrix$unsafeGet, x, y, aMatrix);
+			}));
+};
+var _zwilias$tenten$Matrix$rotate = function (aMatrix) {
+	return _zwilias$tenten$Matrix$flipHorizontal(
+		_zwilias$tenten$Matrix$transpose(aMatrix));
+};
 
-var _user$project$Styles$Dragging = {ctor: 'Dragging'};
-var _user$project$Styles$Candidate = {ctor: 'Candidate'};
-var _user$project$Styles$FilledBlock = {ctor: 'FilledBlock'};
-var _user$project$Styles$EmptyBlock = {ctor: 'EmptyBlock'};
-var _user$project$Styles$FieldBlock = {ctor: 'FieldBlock'};
-var _user$project$Styles$FieldRow = {ctor: 'FieldRow'};
-var _user$project$Styles$Field = {ctor: 'Field'};
-var _user$project$Styles$css = function (_p0) {
+var _zwilias$tenten$Styles$blockGen = F2(
+	function (className, color) {
+		return A2(
+			_rtfeldman$elm_css$Css$class,
+			className,
+			{
+				ctor: '::',
+				_0: _rtfeldman$elm_css$Css$backgroundColor(
+					_rtfeldman$elm_css$Css$hex(color)),
+				_1: {
+					ctor: '::',
+					_0: A3(
+						_rtfeldman$elm_css$Css$border3,
+						_rtfeldman$elm_css$Css$px(1),
+						_rtfeldman$elm_css$Css$solid,
+						_rtfeldman$elm_css$Css$hex(color)),
+					_1: {ctor: '[]'}
+				}
+			});
+	});
+var _zwilias$tenten$Styles$CandidateList = {ctor: 'CandidateList'};
+var _zwilias$tenten$Styles$Score = {ctor: 'Score'};
+var _zwilias$tenten$Styles$Wrapper = {ctor: 'Wrapper'};
+var _zwilias$tenten$Styles$LongestDash = {ctor: 'LongestDash'};
+var _zwilias$tenten$Styles$LongerDash = {ctor: 'LongerDash'};
+var _zwilias$tenten$Styles$LongDash = {ctor: 'LongDash'};
+var _zwilias$tenten$Styles$Dash = {ctor: 'Dash'};
+var _zwilias$tenten$Styles$Dot = {ctor: 'Dot'};
+var _zwilias$tenten$Styles$SmallBox = {ctor: 'SmallBox'};
+var _zwilias$tenten$Styles$BigBox = {ctor: 'BigBox'};
+var _zwilias$tenten$Styles$SmallL = {ctor: 'SmallL'};
+var _zwilias$tenten$Styles$BigL = {ctor: 'BigL'};
+var _zwilias$tenten$Styles$Dragging = {ctor: 'Dragging'};
+var _zwilias$tenten$Styles$Candidate = {ctor: 'Candidate'};
+var _zwilias$tenten$Styles$FilledBlock = {ctor: 'FilledBlock'};
+var _zwilias$tenten$Styles$EmptyBlock = {ctor: 'EmptyBlock'};
+var _zwilias$tenten$Styles$FieldBlock = {ctor: 'FieldBlock'};
+var _zwilias$tenten$Styles$FieldRow = {ctor: 'FieldRow'};
+var _zwilias$tenten$Styles$Field = {ctor: 'Field'};
+var _zwilias$tenten$Styles$css = function (_p0) {
 	return _rtfeldman$elm_css$Css$stylesheet(
 		A2(_rtfeldman$elm_css$Css_Namespace$namespace, 'tenten', _p0));
 }(
@@ -14844,7 +15343,7 @@ var _user$project$Styles$css = function (_p0) {
 		ctor: '::',
 		_0: A2(
 			_rtfeldman$elm_css$Css$class,
-			_user$project$Styles$FieldRow,
+			_zwilias$tenten$Styles$FieldRow,
 			{
 				ctor: '::',
 				_0: _rtfeldman$elm_css$Css$displayFlex,
@@ -14854,25 +15353,23 @@ var _user$project$Styles$css = function (_p0) {
 			ctor: '::',
 			_0: A2(
 				_rtfeldman$elm_css$Css$class,
-				_user$project$Styles$FieldBlock,
+				_zwilias$tenten$Styles$Score,
 				{
 					ctor: '::',
-					_0: _rtfeldman$elm_css$Css$borderRadius(
-						_rtfeldman$elm_css$Css$px(5)),
+					_0: _rtfeldman$elm_css$Css$fontSize(
+						_rtfeldman$elm_css$Css$em(2)),
 					_1: {
 						ctor: '::',
-						_0: _rtfeldman$elm_css$Css$width(
-							_rtfeldman$elm_css$Css$px(40)),
+						_0: _rtfeldman$elm_css$Css$textAlign(_rtfeldman$elm_css$Css$center),
 						_1: {
 							ctor: '::',
-							_0: _rtfeldman$elm_css$Css$height(
-								_rtfeldman$elm_css$Css$px(40)),
-							_1: {
-								ctor: '::',
-								_0: _rtfeldman$elm_css$Css$margin(
-									_rtfeldman$elm_css$Css$px(1)),
-								_1: {ctor: '[]'}
-							}
+							_0: _rtfeldman$elm_css$Css$fontFamilies(
+								{
+									ctor: '::',
+									_0: 'Luckiest Guy',
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
 						}
 					}
 				}),
@@ -14880,35 +15377,17 @@ var _user$project$Styles$css = function (_p0) {
 				ctor: '::',
 				_0: A2(
 					_rtfeldman$elm_css$Css$class,
-					_user$project$Styles$Field,
+					_zwilias$tenten$Styles$Wrapper,
 					{
 						ctor: '::',
-						_0: _rtfeldman$elm_css$Css$margin(
-							_rtfeldman$elm_css$Css$px(10)),
+						_0: A2(
+							_rtfeldman$elm_css$Css$margin2,
+							_rtfeldman$elm_css$Css$px(0),
+							_rtfeldman$elm_css$Css$auto),
 						_1: {
 							ctor: '::',
-							_0: _rtfeldman$elm_css$Css$descendants(
-								{
-									ctor: '::',
-									_0: A2(
-										_rtfeldman$elm_css$Css$class,
-										_user$project$Styles$EmptyBlock,
-										{
-											ctor: '::',
-											_0: _rtfeldman$elm_css$Css$backgroundColor(
-												_rtfeldman$elm_css$Css$hex('CFCFCF')),
-											_1: {
-												ctor: '::',
-												_0: A3(
-													_rtfeldman$elm_css$Css$border3,
-													_rtfeldman$elm_css$Css$px(1),
-													_rtfeldman$elm_css$Css$solid,
-													_rtfeldman$elm_css$Css$hex('CFCFCF')),
-												_1: {ctor: '[]'}
-											}
-										}),
-									_1: {ctor: '[]'}
-								}),
+							_0: _rtfeldman$elm_css$Css$width(
+								_rtfeldman$elm_css$Css$px(440)),
 							_1: {ctor: '[]'}
 						}
 					}),
@@ -14916,18 +15395,13 @@ var _user$project$Styles$css = function (_p0) {
 					ctor: '::',
 					_0: A2(
 						_rtfeldman$elm_css$Css$class,
-						_user$project$Styles$FilledBlock,
+						_zwilias$tenten$Styles$CandidateList,
 						{
 							ctor: '::',
-							_0: _rtfeldman$elm_css$Css$backgroundColor(
-								_rtfeldman$elm_css$Css$hex('FF8271')),
+							_0: _rtfeldman$elm_css$Css$displayFlex,
 							_1: {
 								ctor: '::',
-								_0: A3(
-									_rtfeldman$elm_css$Css$border3,
-									_rtfeldman$elm_css$Css$px(1),
-									_rtfeldman$elm_css$Css$solid,
-									_rtfeldman$elm_css$Css$hex('FF8271')),
+								_0: _rtfeldman$elm_css$Css$justifyContent(_rtfeldman$elm_css$Css$spaceBetween),
 								_1: {ctor: '[]'}
 							}
 						}),
@@ -14935,29 +15409,30 @@ var _user$project$Styles$css = function (_p0) {
 						ctor: '::',
 						_0: A2(
 							_rtfeldman$elm_css$Css$class,
-							_user$project$Styles$Candidate,
+							_zwilias$tenten$Styles$FieldBlock,
 							{
 								ctor: '::',
-								_0: A2(_rtfeldman$elm_css$Css$property, 'transition', 'transform 0.2s ease-in-out'),
+								_0: _rtfeldman$elm_css$Css$borderRadius(
+									_rtfeldman$elm_css$Css$px(5)),
 								_1: {
 									ctor: '::',
-									_0: _rtfeldman$elm_css$Css$transform(
-										_rtfeldman$elm_css$Css$scale(0.5)),
+									_0: _rtfeldman$elm_css$Css$width(
+										_rtfeldman$elm_css$Css$px(40)),
 									_1: {
 										ctor: '::',
-										_0: _rtfeldman$elm_css$Css$display(_rtfeldman$elm_css$Css$inlineBlock),
+										_0: _rtfeldman$elm_css$Css$height(
+											_rtfeldman$elm_css$Css$px(40)),
 										_1: {
 											ctor: '::',
-											_0: _rtfeldman$elm_css$Css$cursor(_rtfeldman$elm_css$Css$move),
+											_0: A3(
+												_rtfeldman$elm_css$Css$border3,
+												_rtfeldman$elm_css$Css$px(1),
+												_rtfeldman$elm_css$Css$solid,
+												_rtfeldman$elm_css$Css$transparent),
 											_1: {
 												ctor: '::',
-												_0: _rtfeldman$elm_css$Css$hover(
-													{
-														ctor: '::',
-														_0: _rtfeldman$elm_css$Css$transform(
-															_rtfeldman$elm_css$Css$scale(1)),
-														_1: {ctor: '[]'}
-													}),
+												_0: _rtfeldman$elm_css$Css$margin(
+													_rtfeldman$elm_css$Css$px(1)),
 												_1: {ctor: '[]'}
 											}
 										}
@@ -14968,13 +15443,124 @@ var _user$project$Styles$css = function (_p0) {
 							ctor: '::',
 							_0: A2(
 								_rtfeldman$elm_css$Css$class,
-								_user$project$Styles$Dragging,
+								_zwilias$tenten$Styles$Field,
 								{
 									ctor: '::',
-									_0: A2(_rtfeldman$elm_css$Css$property, 'pointer-events', 'none'),
-									_1: {ctor: '[]'}
+									_0: _rtfeldman$elm_css$Css$margin(
+										_rtfeldman$elm_css$Css$px(10)),
+									_1: {
+										ctor: '::',
+										_0: _rtfeldman$elm_css$Css$descendants(
+											{
+												ctor: '::',
+												_0: A2(
+													_rtfeldman$elm_css$Css$class,
+													_zwilias$tenten$Styles$EmptyBlock,
+													{
+														ctor: '::',
+														_0: _rtfeldman$elm_css$Css$backgroundColor(
+															_rtfeldman$elm_css$Css$hex('CFCFCF')),
+														_1: {
+															ctor: '::',
+															_0: A3(
+																_rtfeldman$elm_css$Css$border3,
+																_rtfeldman$elm_css$Css$px(1),
+																_rtfeldman$elm_css$Css$solid,
+																_rtfeldman$elm_css$Css$hex('CFCFCF')),
+															_1: {ctor: '[]'}
+														}
+													}),
+												_1: {ctor: '[]'}
+											}),
+										_1: {ctor: '[]'}
+									}
 								}),
-							_1: {ctor: '[]'}
+							_1: {
+								ctor: '::',
+								_0: A2(_zwilias$tenten$Styles$blockGen, _zwilias$tenten$Styles$FilledBlock, '333333'),
+								_1: {
+									ctor: '::',
+									_0: A2(_zwilias$tenten$Styles$blockGen, _zwilias$tenten$Styles$BigL, 'FFC658'),
+									_1: {
+										ctor: '::',
+										_0: A2(_zwilias$tenten$Styles$blockGen, _zwilias$tenten$Styles$SmallL, '50B5D5'),
+										_1: {
+											ctor: '::',
+											_0: A2(_zwilias$tenten$Styles$blockGen, _zwilias$tenten$Styles$Dot, '5D6EB9'),
+											_1: {
+												ctor: '::',
+												_0: A2(_zwilias$tenten$Styles$blockGen, _zwilias$tenten$Styles$BigBox, 'B3FE6A'),
+												_1: {
+													ctor: '::',
+													_0: A2(_zwilias$tenten$Styles$blockGen, _zwilias$tenten$Styles$SmallBox, 'E47D50'),
+													_1: {
+														ctor: '::',
+														_0: A2(_zwilias$tenten$Styles$blockGen, _zwilias$tenten$Styles$Dash, '98DC55'),
+														_1: {
+															ctor: '::',
+															_0: A2(_zwilias$tenten$Styles$blockGen, _zwilias$tenten$Styles$LongDash, '7E8ED5'),
+															_1: {
+																ctor: '::',
+																_0: A2(_zwilias$tenten$Styles$blockGen, _zwilias$tenten$Styles$LongerDash, '448FC4'),
+																_1: {
+																	ctor: '::',
+																	_0: A2(_zwilias$tenten$Styles$blockGen, _zwilias$tenten$Styles$LongestDash, 'ED954A'),
+																	_1: {
+																		ctor: '::',
+																		_0: A2(
+																			_rtfeldman$elm_css$Css$class,
+																			_zwilias$tenten$Styles$Candidate,
+																			{
+																				ctor: '::',
+																				_0: A2(_rtfeldman$elm_css$Css$property, 'transition', 'transform 0.2s ease-in-out'),
+																				_1: {
+																					ctor: '::',
+																					_0: _rtfeldman$elm_css$Css$transform(
+																						_rtfeldman$elm_css$Css$scale(0.5)),
+																					_1: {
+																						ctor: '::',
+																						_0: _rtfeldman$elm_css$Css$display(_rtfeldman$elm_css$Css$inlineBlock),
+																						_1: {
+																							ctor: '::',
+																							_0: _rtfeldman$elm_css$Css$cursor(_rtfeldman$elm_css$Css$move),
+																							_1: {
+																								ctor: '::',
+																								_0: _rtfeldman$elm_css$Css$hover(
+																									{
+																										ctor: '::',
+																										_0: _rtfeldman$elm_css$Css$transform(
+																											_rtfeldman$elm_css$Css$scale(1)),
+																										_1: {ctor: '[]'}
+																									}),
+																								_1: {ctor: '[]'}
+																							}
+																						}
+																					}
+																				}
+																			}),
+																		_1: {
+																			ctor: '::',
+																			_0: A2(
+																				_rtfeldman$elm_css$Css$class,
+																				_zwilias$tenten$Styles$Dragging,
+																				{
+																					ctor: '::',
+																					_0: A2(_rtfeldman$elm_css$Css$property, 'pointer-events', 'none'),
+																					_1: {ctor: '[]'}
+																				}),
+																			_1: {ctor: '[]'}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
 						}
 					}
 				}
@@ -14982,18 +15568,40 @@ var _user$project$Styles$css = function (_p0) {
 		}
 	});
 
-var _user$project$Main$offsetPositionDecoder = A3(
+var _zwilias$tenten$Main$currentTarget = function (decoder) {
+	return A2(_elm_lang$core$Json_Decode$field, 'currentTarget', decoder);
+};
+var _zwilias$tenten$Main$topLeft = A2(
+	_elm_lang$core$Json_Decode$andThen,
+	function (_p0) {
+		var _p1 = _p0;
+		return _elm_lang$core$Json_Decode$succeed(
+			A2(
+				_elm_lang$mouse$Mouse$Position,
+				_elm_lang$core$Basics$round(_p1._0),
+				_elm_lang$core$Basics$round(_p1._1)));
+	},
+	_zwilias$tenten$Main$currentTarget(
+		A3(
+			_elm_lang$core$Json_Decode$map2,
+			F2(
+				function (v0, v1) {
+					return {ctor: '_Tuple2', _0: v0, _1: v1};
+				}),
+			_debois$elm_dom$DOM$offsetLeft,
+			_debois$elm_dom$DOM$offsetTop)));
+var _zwilias$tenten$Main$offsetPositionDecoder = A3(
 	_elm_lang$core$Json_Decode$map2,
 	_elm_lang$mouse$Mouse$Position,
 	A2(_elm_lang$core$Json_Decode$field, 'offsetX', _elm_lang$core$Json_Decode$int),
 	A2(_elm_lang$core$Json_Decode$field, 'offsetY', _elm_lang$core$Json_Decode$int));
-var _user$project$Main$dragPosition = function (block) {
-	var _p0 = block.drag;
-	if (_p0.ctor === 'Nothing') {
+var _zwilias$tenten$Main$dragPosition = function (block) {
+	var _p2 = block.drag;
+	if (_p2.ctor === 'Nothing') {
 		return {ctor: '_Tuple2', _0: '', _1: ''};
 	} else {
-		var _p2 = _p0._0.start;
-		var _p1 = _p0._0.current;
+		var _p4 = _p2._0.start;
+		var _p3 = _p2._0.current;
 		return A2(
 			F2(
 				function (v0, v1) {
@@ -15005,7 +15613,7 @@ var _user$project$Main$dragPosition = function (block) {
 				'translate(',
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					_elm_lang$core$Basics$toString(_p1.x - _p2.x),
+					_elm_lang$core$Basics$toString(_p3.x - _p4.x),
 					A2(
 						_elm_lang$core$Basics_ops['++'],
 						'px',
@@ -15014,54 +15622,74 @@ var _user$project$Main$dragPosition = function (block) {
 							', ',
 							A2(
 								_elm_lang$core$Basics_ops['++'],
-								_elm_lang$core$Basics$toString(_p1.y - _p2.y),
+								_elm_lang$core$Basics$toString(_p3.y - _p4.y),
 								A2(_elm_lang$core$Basics_ops['++'], 'px', ')')))))));
 	}
 };
-var _user$project$Main$dragTransition = function (block) {
-	var _p3 = block.drag;
-	if (_p3.ctor === 'Nothing') {
+var _zwilias$tenten$Main$dragTransition = function (block) {
+	var _p5 = block.drag;
+	if (_p5.ctor === 'Nothing') {
 		return {ctor: '_Tuple2', _0: 'transition', _1: 'transform 0.2s ease-in-out'};
 	} else {
 		return {ctor: '_Tuple2', _0: 'transition', _1: 'none'};
 	}
 };
-var _user$project$Main$_p4 = _rtfeldman$elm_css_helpers$Html_CssHelpers$withNamespace('tenten');
-var _user$project$Main$id = _user$project$Main$_p4.id;
-var _user$project$Main$class = _user$project$Main$_p4.$class;
-var _user$project$Main$classList = _user$project$Main$_p4.classList;
-var _user$project$Main$renderRow = function (fieldRow) {
+var _zwilias$tenten$Main$_p6 = _rtfeldman$elm_css_helpers$Html_CssHelpers$withNamespace('tenten');
+var _zwilias$tenten$Main$id = _zwilias$tenten$Main$_p6.id;
+var _zwilias$tenten$Main$class = _zwilias$tenten$Main$_p6.$class;
+var _zwilias$tenten$Main$classList = _zwilias$tenten$Main$_p6.classList;
+var _zwilias$tenten$Main$renderRow = function (fieldRow) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
 			ctor: '::',
-			_0: _user$project$Main$class(
+			_0: _zwilias$tenten$Main$class(
 				{
 					ctor: '::',
-					_0: _user$project$Styles$FieldRow,
+					_0: _zwilias$tenten$Styles$FieldRow,
 					_1: {ctor: '[]'}
 				}),
 			_1: {ctor: '[]'}
 		},
 		fieldRow);
 };
-var _user$project$Main$renderFieldBlock = function (fieldBlock) {
+var _zwilias$tenten$Main$renderFieldBlock = function (fieldBlock) {
 	var blockTypeToClass = function (blockType) {
-		var _p5 = blockType;
-		if (_p5.ctor === 'Nothing') {
-			return _user$project$Styles$EmptyBlock;
+		var _p7 = blockType;
+		if (_p7.ctor === 'Nothing') {
+			return _zwilias$tenten$Styles$EmptyBlock;
 		} else {
-			return _user$project$Styles$FilledBlock;
+			var _p8 = _p7._0;
+			switch (_p8.ctor) {
+				case 'Dot':
+					return _zwilias$tenten$Styles$Dot;
+				case 'SmallBox':
+					return _zwilias$tenten$Styles$SmallBox;
+				case 'BigBox':
+					return _zwilias$tenten$Styles$BigBox;
+				case 'SmallL':
+					return _zwilias$tenten$Styles$SmallL;
+				case 'BigL':
+					return _zwilias$tenten$Styles$BigL;
+				case 'Dash':
+					return _zwilias$tenten$Styles$Dash;
+				case 'LongDash':
+					return _zwilias$tenten$Styles$LongDash;
+				case 'LongerDash':
+					return _zwilias$tenten$Styles$LongerDash;
+				default:
+					return _zwilias$tenten$Styles$LongestDash;
+			}
 		}
 	};
 	return A2(
 		_elm_lang$html$Html$div,
 		{
 			ctor: '::',
-			_0: _user$project$Main$class(
+			_0: _zwilias$tenten$Main$class(
 				{
 					ctor: '::',
-					_0: _user$project$Styles$FieldBlock,
+					_0: _zwilias$tenten$Styles$FieldBlock,
 					_1: {
 						ctor: '::',
 						_0: blockTypeToClass(fieldBlock),
@@ -15072,55 +15700,126 @@ var _user$project$Main$renderFieldBlock = function (fieldBlock) {
 		},
 		{ctor: '[]'});
 };
-var _user$project$Main$findFirst = F2(
+var _zwilias$tenten$Main$findFirst = F2(
 	function (predicate, aList) {
 		findFirst:
 		while (true) {
-			var _p6 = aList;
-			if (_p6.ctor === '[]') {
+			var _p9 = aList;
+			if (_p9.ctor === '[]') {
 				return _elm_lang$core$Maybe$Nothing;
 			} else {
-				var _p9 = _p6._1;
-				var _p7 = _p6._0;
-				if (_p7.ctor === 'Nothing') {
-					var _v5 = predicate,
-						_v6 = _p9;
-					predicate = _v5;
-					aList = _v6;
+				var _p12 = _p9._1;
+				var _p10 = _p9._0;
+				if (_p10.ctor === 'Nothing') {
+					var _v7 = predicate,
+						_v8 = _p12;
+					predicate = _v7;
+					aList = _v8;
 					continue findFirst;
 				} else {
-					var _p8 = _p7._0;
-					if (predicate(_p8)) {
-						return _elm_lang$core$Maybe$Just(_p8);
+					var _p11 = _p10._0;
+					if (predicate(_p11)) {
+						return _elm_lang$core$Maybe$Just(_p11);
 					} else {
-						var _v7 = predicate,
-							_v8 = _p9;
-						predicate = _v7;
-						aList = _v8;
+						var _v9 = predicate,
+							_v10 = _p12;
+						predicate = _v9;
+						aList = _v10;
 						continue findFirst;
 					}
 				}
 			}
 		}
 	});
-var _user$project$Main$replaceBlock = F3(
+var _zwilias$tenten$Main$replaceBlock = F3(
 	function (oldBlock, newBlock, blockList) {
 		var replacer = function (maybeBlock) {
-			var _p10 = maybeBlock;
-			if (_p10.ctor === 'Nothing') {
+			var _p13 = maybeBlock;
+			if (_p13.ctor === 'Nothing') {
 				return _elm_lang$core$Maybe$Nothing;
 			} else {
-				var _p11 = _p10._0;
-				return _elm_lang$core$Native_Utils.eq(_p11, oldBlock) ? _elm_lang$core$Maybe$Just(newBlock) : _elm_lang$core$Maybe$Just(_p11);
+				var _p14 = _p13._0;
+				return _elm_lang$core$Native_Utils.eq(_p14, oldBlock) ? newBlock : _elm_lang$core$Maybe$Just(_p14);
 			}
 		};
 		return A2(_elm_lang$core$List$map, replacer, blockList);
 	});
-var _user$project$Main$getDelta = F2(
+var _zwilias$tenten$Main$nearestMultiplier = F2(
+	function (multiple, number) {
+		return ((number + ((multiple / 2) | 0)) / multiple) | 0;
+	});
+var _zwilias$tenten$Main$positionToNearestLocation = function (position) {
+	return _elm_lang$core$Native_Utils.update(
+		position,
+		{
+			x: A2(_zwilias$tenten$Main$nearestMultiplier, 44, position.x),
+			y: A2(_zwilias$tenten$Main$nearestMultiplier, 44, position.y)
+		});
+};
+var _zwilias$tenten$Main$inBounds = F3(
+	function (lower, upper, number) {
+		return (_elm_lang$core$Native_Utils.cmp(number, lower) > -1) && (_elm_lang$core$Native_Utils.cmp(number, upper) < 1);
+	});
+var _zwilias$tenten$Main$positionInBounds = F3(
+	function (width, height, _p15) {
+		var _p16 = _p15;
+		return A3(_zwilias$tenten$Main$inBounds, 0, width, _p16.x) && A3(_zwilias$tenten$Main$inBounds, 0, height, _p16.y);
+	});
+var _zwilias$tenten$Main$valueOfMatrix = function (aMatrix) {
+	return A3(
+		_zwilias$tenten$Matrix$foldl,
+		function (val) {
+			return F2(
+				function (x, y) {
+					return x + y;
+				})(
+				function () {
+					var _p17 = val;
+					if (_p17.ctor === 'Nothing') {
+						return 0;
+					} else {
+						return 1;
+					}
+				}());
+		},
+		0,
+		aMatrix);
+};
+var _zwilias$tenten$Main$listsToPairs = F2(
+	function (firstList, secondList) {
+		return A2(
+			_elm_lang$core$List$concatMap,
+			function (f) {
+				return A2(
+					_elm_lang$core$List$map,
+					function (s) {
+						return {ctor: '_Tuple2', _0: f, _1: s};
+					},
+					secondList);
+			},
+			firstList);
+	});
+var _zwilias$tenten$Main$getDelta = F2(
 	function (from, to) {
 		return A2(_elm_lang$mouse$Mouse$Position, from.x - to.x, from.y - to.y);
 	});
-var _user$project$Main$shapeToMatrixInitializer = F4(
+var _zwilias$tenten$Main$applyTransformation = F2(
+	function (times, matrix) {
+		applyTransformation:
+		while (true) {
+			var _p18 = times;
+			if (_p18 === 0) {
+				return matrix;
+			} else {
+				var _v15 = times - 1,
+					_v16 = _zwilias$tenten$Matrix$rotate(matrix);
+				times = _v15;
+				matrix = _v16;
+				continue applyTransformation;
+			}
+		}
+	});
+var _zwilias$tenten$Main$shapeToMatrixInitializer = F4(
 	function (blockType, shapeAsLists, x, y) {
 		var shape = _elm_lang$core$Array$fromList(
 			A2(_elm_lang$core$List$map, _elm_lang$core$Array$fromList, shapeAsLists));
@@ -15138,227 +15837,394 @@ var _user$project$Main$shapeToMatrixInitializer = F4(
 						},
 						A2(_elm_lang$core$Array$get, y, shape)))));
 	});
-var _user$project$Main$isDebug = true;
-var _user$project$Main$log = F2(
+var _zwilias$tenten$Main$possibleTransformations = function (blockType) {
+	var _p19 = blockType;
+	switch (_p19.ctor) {
+		case 'Dot':
+			return 0;
+		case 'SmallL':
+			return 3;
+		case 'BigL':
+			return 3;
+		case 'SmallBox':
+			return 0;
+		case 'BigBox':
+			return 0;
+		case 'Dash':
+			return 1;
+		case 'LongDash':
+			return 1;
+		case 'LongerDash':
+			return 1;
+		default:
+			return 1;
+	}
+};
+var _zwilias$tenten$Main$addTransformations = function (_p20) {
+	var _p21 = _p20;
+	var _p25 = _p21._1;
+	var _p24 = _p21._0;
+	var numberAllowed = _zwilias$tenten$Main$possibleTransformations(_p24.blockType);
+	var intGen = A2(_mgold$elm_random_pcg$Random_Pcg$int, 0, numberAllowed);
+	var _p22 = function () {
+		var _p23 = numberAllowed;
+		if (_p23 === 0) {
+			return {ctor: '_Tuple2', _0: 0, _1: _p25};
+		} else {
+			return A2(_mgold$elm_random_pcg$Random_Pcg$step, intGen, _p25);
+		}
+	}();
+	var transformations = _p22._0;
+	var newSeed = _p22._1;
+	return {
+		ctor: '_Tuple2',
+		_0: _elm_lang$core$Native_Utils.update(
+			_p24,
+			{transformations: transformations}),
+		_1: newSeed
+	};
+};
+var _zwilias$tenten$Main$isDebug = true;
+var _zwilias$tenten$Main$log = F2(
 	function (string, logMe) {
-		var _p12 = _user$project$Main$isDebug;
-		if (_p12 === true) {
+		var _p26 = _zwilias$tenten$Main$isDebug;
+		if (_p26 === true) {
 			return A2(_elm_lang$core$Debug$log, string, logMe);
 		} else {
 			return logMe;
 		}
 	});
-var _user$project$Main$getFieldPosition = function (_p13) {
-	var _p14 = _p13;
+var _zwilias$tenten$Main$getFieldPosition = function (_p27) {
+	var _p28 = _p27;
 	return A2(
-		_user$project$Main$log,
+		_zwilias$tenten$Main$log,
 		'fieldpos',
-		A2(_user$project$Main$getDelta, _p14.position, _p14.offSet));
+		A2(_zwilias$tenten$Main$getDelta, _p28.position, _p28.offSet));
 };
-var _user$project$Main$getTopLeft = function (_p15) {
-	var _p16 = _p15;
+var _zwilias$tenten$Main$getTopLeft = function (_p29) {
+	var _p30 = _p29;
 	return A2(
-		_user$project$Main$log,
+		_zwilias$tenten$Main$log,
 		'topleft',
-		A2(_user$project$Main$getDelta, _p16.current, _p16.offSet));
+		A2(
+			_zwilias$tenten$Main$getDelta,
+			_p30.topLeftPos,
+			A2(_zwilias$tenten$Main$getDelta, _p30.start, _p30.current)));
 };
-var _user$project$Main$Block = F2(
-	function (a, b) {
-		return {blockType: a, drag: b};
+var _zwilias$tenten$Main$removeFullLines = function (matrix) {
+	var arrayAll = F2(
+		function (op, array) {
+			return A2(
+				_elm_lang$core$List$all,
+				op,
+				_elm_lang$core$Array$toList(array));
+		});
+	var isRowDone = function (row) {
+		return A2(
+			_zwilias$tenten$Main$log,
+			'row done',
+			A2(arrayAll, _elm_community$maybe_extra$Maybe_Extra$isJust, row));
+	};
+	var handleRow = function (array) {
+		return _elm_lang$core$Native_Utils.eq(
+			isRowDone(array),
+			true) ? {
+			ctor: '_Tuple2',
+			_0: A2(
+				_elm_lang$core$Array$map,
+				_elm_lang$core$Basics$always(_elm_lang$core$Maybe$Nothing),
+				array),
+			_1: _elm_lang$core$Array$length(array)
+		} : {ctor: '_Tuple2', _0: array, _1: 0};
+	};
+	var handleRows = function (_p31) {
+		var _p32 = _p31;
+		return A2(
+			_elm_lang$core$Tuple$mapSecond,
+			function (score) {
+				return score + _p32._1;
+			},
+			A2(
+				_elm_lang$core$Tuple$mapSecond,
+				_elm_lang$core$List$sum,
+				A2(
+					_elm_lang$core$Tuple$mapFirst,
+					_elm_lang$core$Array$fromList,
+					_elm_lang$core$List$unzip(
+						_elm_lang$core$Array$toList(
+							A2(_elm_lang$core$Array$map, handleRow, _p32._0))))));
+	};
+	var handleColumns = function (_p33) {
+		var _p34 = _p33;
+		return A2(
+			_elm_lang$core$Tuple$mapFirst,
+			_zwilias$tenten$Matrix$transpose,
+			handleRows(
+				A3(
+					_elm_lang$core$Basics$flip,
+					F2(
+						function (v0, v1) {
+							return {ctor: '_Tuple2', _0: v0, _1: v1};
+						}),
+					_p34._1,
+					_zwilias$tenten$Matrix$transpose(_p34._0))));
+	};
+	return handleColumns(
+		handleRows(
+			A3(
+				_elm_lang$core$Basics$flip,
+				F2(
+					function (v0, v1) {
+						return {ctor: '_Tuple2', _0: v0, _1: v1};
+					}),
+				0,
+				matrix)));
+};
+var _zwilias$tenten$Main$isUnoccupied = F3(
+	function (baseMatrix, overlay, offSet) {
+		var _p35 = A2(
+			_zwilias$tenten$Main$log,
+			'dims',
+			_zwilias$tenten$Matrix$dimension(overlay));
+		var width = _p35.width;
+		var height = _p35.height;
+		return A2(
+			_elm_lang$core$List$all,
+			function (_p36) {
+				var _p37 = _p36;
+				var _p39 = _p37._1;
+				var _p38 = _p37._0;
+				return A2(
+					_zwilias$tenten$Main$log,
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'isNothing at ',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(_p38),
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								', ',
+								_elm_lang$core$Basics$toString(_p39)))),
+					_elm_community$maybe_extra$Maybe_Extra$isNothing(
+						_elm_community$maybe_extra$Maybe_Extra$join(
+							A3(_zwilias$tenten$Matrix$get, _p39, _p38, overlay))) || _elm_community$maybe_extra$Maybe_Extra$isNothing(
+						_elm_community$maybe_extra$Maybe_Extra$join(
+							A3(_zwilias$tenten$Matrix$get, _p39 + offSet.y, _p38 + offSet.x, baseMatrix))));
+			},
+			A2(
+				_zwilias$tenten$Main$log,
+				'checking ranges...',
+				A2(
+					_zwilias$tenten$Main$listsToPairs,
+					A2(_elm_lang$core$List$range, 0, width - 1),
+					A2(_elm_lang$core$List$range, 0, height - 1))));
 	});
-var _user$project$Main$Drag = F3(
+var _zwilias$tenten$Main$_p40 = {ctor: '_Tuple3', _0: 10, _1: 10, _2: 3};
+var _zwilias$tenten$Main$fieldWidth = _zwilias$tenten$Main$_p40._0;
+var _zwilias$tenten$Main$fieldHeight = _zwilias$tenten$Main$_p40._1;
+var _zwilias$tenten$Main$candidates = _zwilias$tenten$Main$_p40._2;
+var _zwilias$tenten$Main$Model = F4(
+	function (a, b, c, d) {
+		return {score: a, field: b, seed: c, next: d};
+	});
+var _zwilias$tenten$Main$Block = F4(
+	function (a, b, c, d) {
+		return {blockType: a, drag: b, seed: c, transformations: d};
+	});
+var _zwilias$tenten$Main$createBlock = F2(
+	function (blockType, seedRandom) {
+		return A4(_zwilias$tenten$Main$Block, blockType, _elm_lang$core$Maybe$Nothing, seedRandom, 0);
+	});
+var _zwilias$tenten$Main$Drag = F3(
 	function (a, b, c) {
-		return {start: a, current: b, offSet: c};
+		return {start: a, current: b, topLeftPos: c};
 	});
-var _user$project$Main$handleDragAction = F2(
-	function (dragMsg, model) {
-		var _p17 = dragMsg;
-		switch (_p17.ctor) {
-			case 'DragStart':
-				var _p19 = _p17._2;
-				var _p18 = _p17._0;
-				var newBlocks = A3(
-					_user$project$Main$replaceBlock,
-					_p18,
-					_elm_lang$core$Native_Utils.update(
-						_p18,
-						{
-							drag: _elm_lang$core$Maybe$Just(
-								A3(_user$project$Main$Drag, _p19, _p19, _p17._1))
-						}),
-					model.next);
-				return A2(
-					_NoRedInk$rocket_update$Rocket_ops['=>'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{next: newBlocks}),
-					{ctor: '[]'});
-			case 'DragAt':
-				var _p21 = _p17._0;
-				var updateDrag = function (maybeDrag) {
-					var _p20 = maybeDrag;
-					if (_p20.ctor === 'Nothing') {
-						return _elm_lang$core$Maybe$Nothing;
-					} else {
-						return _elm_lang$core$Maybe$Just(
-							_elm_lang$core$Native_Utils.update(
-								_p20._0,
-								{current: _p17._1}));
-					}
-				};
-				var newBlocks = A3(
-					_user$project$Main$replaceBlock,
-					_p21,
-					_elm_lang$core$Native_Utils.update(
-						_p21,
-						{
-							drag: updateDrag(_p21.drag)
-						}),
-					model.next);
-				return A2(
-					_NoRedInk$rocket_update$Rocket_ops['=>'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{next: newBlocks}),
-					{ctor: '[]'});
-			default:
-				var _p23 = _p17._0;
-				var newBlocks = A3(
-					_user$project$Main$replaceBlock,
-					_p23,
-					_elm_lang$core$Native_Utils.update(
-						_p23,
-						{drag: _elm_lang$core$Maybe$Nothing}),
-					model.next);
-				var getOffsetLocation = F2(
-					function (drag, fieldLocation) {
-						var fieldPosition = A2(_elm_lang$core$Maybe$map, _user$project$Main$getFieldPosition, fieldLocation);
-						var dragPosition = A2(_elm_lang$core$Maybe$map, _user$project$Main$getTopLeft, drag);
-						return A3(_elm_lang$core$Maybe$map2, _user$project$Main$getDelta, dragPosition, fieldPosition);
-					});
-				var _p22 = A2(
-					_user$project$Main$log,
-					'localized delta = ',
-					A2(getOffsetLocation, _p23.drag, model.field.mousePosition));
-				return A2(
-					_NoRedInk$rocket_update$Rocket_ops['=>'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{next: newBlocks}),
-					{ctor: '[]'});
-		}
-	});
-var _user$project$Main$update = F2(
-	function (msg, model) {
-		var _p24 = A2(_user$project$Main$log, 'message', msg);
-		switch (_p24.ctor) {
-			case 'DragAction':
-				return A2(_user$project$Main$handleDragAction, _p24._0, model);
-			case 'MouseEnterField':
-				var setPosition = F2(
-					function (position, field) {
-						return _elm_lang$core$Native_Utils.update(
-							field,
-							{
-								mousePosition: _elm_lang$core$Maybe$Just(
-									{offSet: _p24._0, position: position})
-							});
-					});
-				return A2(
-					_NoRedInk$rocket_update$Rocket_ops['=>'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							field: A2(setPosition, _p24._1, model.field)
-						}),
-					{ctor: '[]'});
-			default:
-				var unsetPosition = function (field) {
-					return _elm_lang$core$Native_Utils.update(
-						field,
-						{mousePosition: _elm_lang$core$Maybe$Nothing});
-				};
-				return A2(
-					_NoRedInk$rocket_update$Rocket_ops['=>'],
-					_elm_lang$core$Native_Utils.update(
-						model,
-						{
-							field: unsetPosition(model.field)
-						}),
-					{ctor: '[]'});
-		}
-	});
-var _user$project$Main$FieldLocation = F2(
+var _zwilias$tenten$Main$FieldLocation = F2(
 	function (a, b) {
 		return {position: a, offSet: b};
 	});
-var _user$project$Main$Field = F2(
+var _zwilias$tenten$Main$Field = F2(
 	function (a, b) {
 		return {blocks: a, mousePosition: b};
 	});
-var _user$project$Main$emptyField = F2(
+var _zwilias$tenten$Main$emptyField = F2(
 	function (width, height) {
 		return A2(
-			_user$project$Main$Field,
+			_zwilias$tenten$Main$Field,
 			A3(
-				_user$project$Matrix$create,
+				_zwilias$tenten$Matrix$create,
 				width,
 				height,
 				_elm_lang$core$Basics$always(
 					_elm_lang$core$Basics$always(_elm_lang$core$Maybe$Nothing))),
 			_elm_lang$core$Maybe$Nothing);
 	});
-var _user$project$Main$Model = F4(
-	function (a, b, c, d) {
-		return {score: a, field: b, seed: c, next: d};
-	});
-var _user$project$Main$Pyramid = {ctor: 'Pyramid'};
-var _user$project$Main$LongestDash = {ctor: 'LongestDash'};
-var _user$project$Main$LongerDash = {ctor: 'LongerDash'};
-var _user$project$Main$LongDash = {ctor: 'LongDash'};
-var _user$project$Main$Dash = {ctor: 'Dash'};
-var _user$project$Main$Dot = {ctor: 'Dot'};
-var _user$project$Main$SmallBox = {ctor: 'SmallBox'};
-var _user$project$Main$BigBox = {ctor: 'BigBox'};
-var _user$project$Main$SmallL = {ctor: 'SmallL'};
-var _user$project$Main$BigL = {ctor: 'BigL'};
-var _user$project$Main$blockToMatrix = function (block) {
-	var _p25 = block.blockType;
-	switch (_p25.ctor) {
-		case 'BigL':
-			return A3(
-				_user$project$Matrix$create,
-				3,
-				3,
-				A2(
-					_user$project$Main$shapeToMatrixInitializer,
-					_user$project$Main$BigL,
-					{
+var _zwilias$tenten$Main$LongestDash = {ctor: 'LongestDash'};
+var _zwilias$tenten$Main$LongerDash = {ctor: 'LongerDash'};
+var _zwilias$tenten$Main$LongDash = {ctor: 'LongDash'};
+var _zwilias$tenten$Main$Dash = {ctor: 'Dash'};
+var _zwilias$tenten$Main$Dot = {ctor: 'Dot'};
+var _zwilias$tenten$Main$SmallBox = {ctor: 'SmallBox'};
+var _zwilias$tenten$Main$BigBox = {ctor: 'BigBox'};
+var _zwilias$tenten$Main$SmallL = {ctor: 'SmallL'};
+var _zwilias$tenten$Main$BigL = {ctor: 'BigL'};
+var _zwilias$tenten$Main$generateCandidate = function (seed) {
+	var possibleTypes = {
+		ctor: '::',
+		_0: _zwilias$tenten$Main$BigL,
+		_1: {
+			ctor: '::',
+			_0: _zwilias$tenten$Main$SmallL,
+			_1: {
+				ctor: '::',
+				_0: _zwilias$tenten$Main$BigBox,
+				_1: {
+					ctor: '::',
+					_0: _zwilias$tenten$Main$SmallBox,
+					_1: {
 						ctor: '::',
-						_0: {
+						_0: _zwilias$tenten$Main$Dot,
+						_1: {
 							ctor: '::',
-							_0: true,
+							_0: _zwilias$tenten$Main$Dash,
 							_1: {
 								ctor: '::',
-								_0: true,
+								_0: _zwilias$tenten$Main$LongDash,
 								_1: {
 									ctor: '::',
-									_0: true,
-									_1: {ctor: '[]'}
+									_0: _zwilias$tenten$Main$LongerDash,
+									_1: {
+										ctor: '::',
+										_0: _zwilias$tenten$Main$LongestDash,
+										_1: {ctor: '[]'}
+									}
 								}
 							}
-						},
-						_1: {
+						}
+					}
+				}
+			}
+		}
+	};
+	var intGen = A2(
+		_mgold$elm_random_pcg$Random_Pcg$int,
+		0,
+		_elm_lang$core$List$length(possibleTypes) - 1);
+	var _p41 = A2(_mgold$elm_random_pcg$Random_Pcg$step, intGen, seed);
+	var randomNumber = _p41._0;
+	var nextSeed = _p41._1;
+	var blockType = function () {
+		var _p42 = randomNumber;
+		switch (_p42) {
+			case 0:
+				return _zwilias$tenten$Main$BigL;
+			case 1:
+				return _zwilias$tenten$Main$SmallL;
+			case 2:
+				return _zwilias$tenten$Main$BigBox;
+			case 3:
+				return _zwilias$tenten$Main$SmallBox;
+			case 4:
+				return _zwilias$tenten$Main$Dot;
+			case 5:
+				return _zwilias$tenten$Main$Dash;
+			case 6:
+				return _zwilias$tenten$Main$LongDash;
+			case 7:
+				return _zwilias$tenten$Main$LongerDash;
+			case 8:
+				return _zwilias$tenten$Main$LongestDash;
+			default:
+				return _elm_lang$core$Native_Utils.crashCase(
+					'Main',
+					{
+						start: {line: 147, column: 17},
+						end: {line: 176, column: 44}
+					},
+					_p42)('Nein.');
+		}
+	}();
+	return _zwilias$tenten$Main$addTransformations(
+		function (block) {
+			return {ctor: '_Tuple2', _0: block, _1: nextSeed};
+		}(
+			A2(_zwilias$tenten$Main$createBlock, blockType, seed)));
+};
+var _zwilias$tenten$Main$generateCandidates = function (model) {
+	var _p44 = A3(
+		_elm_lang$core$List$foldl,
+		F2(
+			function (_p46, _p45) {
+				var _p47 = _p45;
+				var _p48 = _zwilias$tenten$Main$generateCandidate(_p47._1);
+				var newCandidate = _p48._0;
+				var newSeed = _p48._1;
+				return {
+					ctor: '_Tuple2',
+					_0: {
+						ctor: '::',
+						_0: _elm_lang$core$Maybe$Just(newCandidate),
+						_1: _p47._0
+					},
+					_1: newSeed
+				};
+			}),
+		{
+			ctor: '_Tuple2',
+			_0: {ctor: '[]'},
+			_1: model.seed
+		},
+		A2(_elm_lang$core$List$range, 1, _zwilias$tenten$Main$candidates));
+	var newCandidates = _p44._0;
+	var newSeed = _p44._1;
+	var _p49 = A2(
+		_zwilias$tenten$Main$log,
+		'next',
+		A2(_elm_lang$core$List$filter, _elm_community$maybe_extra$Maybe_Extra$isJust, model.next));
+	if (_p49.ctor === '[]') {
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{seed: newSeed, next: newCandidates});
+	} else {
+		return model;
+	}
+};
+var _zwilias$tenten$Main$init = function (flags) {
+	return A2(
+		_NoRedInk$rocket_update$Rocket_ops['=>'],
+		_zwilias$tenten$Main$generateCandidates(
+			{
+				score: 0,
+				field: A2(_zwilias$tenten$Main$emptyField, _zwilias$tenten$Main$fieldWidth, _zwilias$tenten$Main$fieldHeight),
+				seed: _mgold$elm_random_pcg$Random_Pcg$initialSeed(flags),
+				next: {ctor: '[]'}
+			}),
+		{ctor: '[]'});
+};
+var _zwilias$tenten$Main$blockToMatrix = function (block) {
+	var myMatrix = function () {
+		var _p50 = block.blockType;
+		switch (_p50.ctor) {
+			case 'BigL':
+				return A3(
+					_zwilias$tenten$Matrix$create,
+					3,
+					3,
+					A2(
+						_zwilias$tenten$Main$shapeToMatrixInitializer,
+						_zwilias$tenten$Main$BigL,
+						{
 							ctor: '::',
 							_0: {
 								ctor: '::',
 								_0: true,
 								_1: {
 									ctor: '::',
-									_0: false,
+									_0: true,
 									_1: {
 										ctor: '::',
-										_0: false,
+										_0: true,
 										_1: {ctor: '[]'}
 									}
 								}
@@ -15378,24 +16244,49 @@ var _user$project$Main$blockToMatrix = function (block) {
 										}
 									}
 								},
-								_1: {ctor: '[]'}
+								_1: {
+									ctor: '::',
+									_0: {
+										ctor: '::',
+										_0: true,
+										_1: {
+											ctor: '::',
+											_0: false,
+											_1: {
+												ctor: '::',
+												_0: false,
+												_1: {ctor: '[]'}
+											}
+										}
+									},
+									_1: {ctor: '[]'}
+								}
 							}
-						}
-					}));
-		case 'Pyramid':
-			return A3(
-				_user$project$Matrix$create,
-				3,
-				2,
-				A2(
-					_user$project$Main$shapeToMatrixInitializer,
-					_user$project$Main$Pyramid,
-					{
-						ctor: '::',
-						_0: {
+						}));
+			case 'LongestDash':
+				return A3(
+					_zwilias$tenten$Matrix$create,
+					5,
+					1,
+					A2(
+						_zwilias$tenten$Main$shapeToMatrixInitializer,
+						_zwilias$tenten$Main$LongestDash,
+						{
 							ctor: '::',
-							_0: false,
-							_1: {
+							_0: A2(_elm_lang$core$List$repeat, 5, true),
+							_1: {ctor: '[]'}
+						}));
+			case 'SmallL':
+				return A3(
+					_zwilias$tenten$Matrix$create,
+					2,
+					2,
+					A2(
+						_zwilias$tenten$Main$shapeToMatrixInitializer,
+						_zwilias$tenten$Main$SmallL,
+						{
+							ctor: '::',
+							_0: {
 								ctor: '::',
 								_0: true,
 								_1: {
@@ -15403,14 +16294,10 @@ var _user$project$Main$blockToMatrix = function (block) {
 									_0: false,
 									_1: {ctor: '[]'}
 								}
-							}
-						},
-						_1: {
-							ctor: '::',
-							_0: {
+							},
+							_1: {
 								ctor: '::',
-								_0: true,
-								_1: {
+								_0: {
 									ctor: '::',
 									_0: true,
 									_1: {
@@ -15418,189 +16305,393 @@ var _user$project$Main$blockToMatrix = function (block) {
 										_0: true,
 										_1: {ctor: '[]'}
 									}
-								}
-							},
-							_1: {ctor: '[]'}
-						}
-					}));
-		case 'LongestDash':
-			return A3(
-				_user$project$Matrix$create,
-				5,
-				1,
-				A2(
-					_user$project$Main$shapeToMatrixInitializer,
-					_user$project$Main$LongestDash,
-					{
-						ctor: '::',
-						_0: {
+								},
+								_1: {ctor: '[]'}
+							}
+						}));
+			case 'BigBox':
+				return A3(
+					_zwilias$tenten$Matrix$create,
+					3,
+					3,
+					A2(
+						_zwilias$tenten$Main$shapeToMatrixInitializer,
+						_zwilias$tenten$Main$BigBox,
+						A2(
+							_elm_lang$core$List$repeat,
+							3,
+							A2(_elm_lang$core$List$repeat, 3, true))));
+			case 'SmallBox':
+				return A3(
+					_zwilias$tenten$Matrix$create,
+					2,
+					2,
+					A2(
+						_zwilias$tenten$Main$shapeToMatrixInitializer,
+						_zwilias$tenten$Main$SmallBox,
+						A2(
+							_elm_lang$core$List$repeat,
+							2,
+							A2(_elm_lang$core$List$repeat, 2, true))));
+			case 'Dot':
+				return A3(
+					_zwilias$tenten$Matrix$create,
+					1,
+					1,
+					A2(
+						_zwilias$tenten$Main$shapeToMatrixInitializer,
+						_zwilias$tenten$Main$Dot,
+						{
 							ctor: '::',
-							_0: true,
-							_1: {
+							_0: {
 								ctor: '::',
 								_0: true,
-								_1: {
-									ctor: '::',
-									_0: true,
-									_1: {
-										ctor: '::',
-										_0: true,
-										_1: {
-											ctor: '::',
-											_0: true,
-											_1: {ctor: '[]'}
-										}
-									}
-								}
-							}
-						},
-						_1: {ctor: '[]'}
-					}));
-		default:
-			return _user$project$Matrix$empty;
-	}
-};
-var _user$project$Main$init = {
-	ctor: '_Tuple2',
-	_0: {
-		score: 0,
-		field: A2(_user$project$Main$emptyField, 10, 10),
-		seed: _elm_lang$core$Random$initialSeed(227852860),
-		next: {
-			ctor: '::',
-			_0: _elm_lang$core$Maybe$Just(
-				A2(_user$project$Main$Block, _user$project$Main$BigL, _elm_lang$core$Maybe$Nothing)),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$core$Maybe$Just(
-					A2(_user$project$Main$Block, _user$project$Main$Pyramid, _elm_lang$core$Maybe$Nothing)),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$core$Maybe$Just(
-						A2(_user$project$Main$Block, _user$project$Main$LongestDash, _elm_lang$core$Maybe$Nothing)),
-					_1: {ctor: '[]'}
-				}
-			}
+								_1: {ctor: '[]'}
+							},
+							_1: {ctor: '[]'}
+						}));
+			case 'Dash':
+				return A3(
+					_zwilias$tenten$Matrix$create,
+					2,
+					1,
+					A2(
+						_zwilias$tenten$Main$shapeToMatrixInitializer,
+						_zwilias$tenten$Main$Dash,
+						{
+							ctor: '::',
+							_0: A2(_elm_lang$core$List$repeat, 2, true),
+							_1: {ctor: '[]'}
+						}));
+			case 'LongDash':
+				return A3(
+					_zwilias$tenten$Matrix$create,
+					3,
+					1,
+					A2(
+						_zwilias$tenten$Main$shapeToMatrixInitializer,
+						_zwilias$tenten$Main$LongDash,
+						{
+							ctor: '::',
+							_0: A2(_elm_lang$core$List$repeat, 3, true),
+							_1: {ctor: '[]'}
+						}));
+			default:
+				return A3(
+					_zwilias$tenten$Matrix$create,
+					4,
+					1,
+					A2(
+						_zwilias$tenten$Main$shapeToMatrixInitializer,
+						_zwilias$tenten$Main$LongerDash,
+						{
+							ctor: '::',
+							_0: A2(_elm_lang$core$List$repeat, 4, true),
+							_1: {ctor: '[]'}
+						}));
 		}
-	},
-	_1: _elm_lang$core$Platform_Cmd$none
+	}();
+	return A2(_zwilias$tenten$Main$applyTransformation, block.transformations, myMatrix);
 };
-var _user$project$Main$DragEnd = F2(
+var _zwilias$tenten$Main$dropLocation = F2(
+	function (block, field) {
+		var blockMatrix = _zwilias$tenten$Main$blockToMatrix(block);
+		var size = _zwilias$tenten$Matrix$dimension(blockMatrix);
+		var getOffsetLocation = F2(
+			function (drag, fieldLocation) {
+				var fieldPosition = A2(_elm_lang$core$Maybe$map, _zwilias$tenten$Main$getFieldPosition, fieldLocation);
+				var dragPosition = A2(_elm_lang$core$Maybe$map, _zwilias$tenten$Main$getTopLeft, drag);
+				return A3(_elm_lang$core$Maybe$map2, _zwilias$tenten$Main$getDelta, dragPosition, fieldPosition);
+			});
+		var localizedDelta = A2(getOffsetLocation, block.drag, field.mousePosition);
+		var nearestLocation = A2(
+			_zwilias$tenten$Main$log,
+			'nearest location',
+			A2(_elm_lang$core$Maybe$map, _zwilias$tenten$Main$positionToNearestLocation, localizedDelta));
+		return A2(
+			_zwilias$tenten$Main$log,
+			'is unoccupied',
+			A2(
+				_elm_community$maybe_extra$Maybe_Extra$filter,
+				function (location) {
+					return A3(_zwilias$tenten$Main$isUnoccupied, field.blocks, blockMatrix, location);
+				},
+				A2(
+					_zwilias$tenten$Main$log,
+					'is in bounds',
+					A2(
+						_elm_community$maybe_extra$Maybe_Extra$filter,
+						A2(_zwilias$tenten$Main$positionInBounds, _zwilias$tenten$Main$fieldWidth - size.width, _zwilias$tenten$Main$fieldHeight - size.height),
+						nearestLocation))));
+	});
+var _zwilias$tenten$Main$handleDragAction = F2(
+	function (dragMsg, model) {
+		var _p51 = dragMsg;
+		switch (_p51.ctor) {
+			case 'DragStart':
+				var _p53 = _p51._2;
+				var _p52 = _p51._0;
+				var newBlocks = A3(
+					_zwilias$tenten$Main$replaceBlock,
+					_p52,
+					A2(
+						_zwilias$tenten$Main$log,
+						'registerest drag start',
+						_elm_lang$core$Maybe$Just(
+							_elm_lang$core$Native_Utils.update(
+								_p52,
+								{
+									drag: _elm_lang$core$Maybe$Just(
+										A3(_zwilias$tenten$Main$Drag, _p53, _p53, _p51._1))
+								}))),
+					model.next);
+				return A2(
+					_NoRedInk$rocket_update$Rocket_ops['=>'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{next: newBlocks}),
+					{ctor: '[]'});
+			case 'DragAt':
+				var _p55 = _p51._0;
+				var updateDrag = function (maybeDrag) {
+					var _p54 = maybeDrag;
+					if (_p54.ctor === 'Nothing') {
+						return _elm_lang$core$Maybe$Nothing;
+					} else {
+						return _elm_lang$core$Maybe$Just(
+							_elm_lang$core$Native_Utils.update(
+								_p54._0,
+								{current: _p51._1}));
+					}
+				};
+				var newBlocks = A3(
+					_zwilias$tenten$Main$replaceBlock,
+					_p55,
+					_elm_lang$core$Maybe$Just(
+						_elm_lang$core$Native_Utils.update(
+							_p55,
+							{
+								drag: updateDrag(_p55.drag)
+							})),
+					model.next);
+				return A2(
+					_NoRedInk$rocket_update$Rocket_ops['=>'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{next: newBlocks}),
+					{ctor: '[]'});
+			default:
+				var _p60 = _p51._0;
+				var blockMatrix = _zwilias$tenten$Main$blockToMatrix(_p60);
+				var _p56 = function () {
+					var _p57 = A2(_zwilias$tenten$Main$dropLocation, _p60, model.field);
+					if (_p57.ctor === 'Nothing') {
+						return {
+							ctor: '_Tuple3',
+							_0: _elm_lang$core$Maybe$Just(
+								_elm_lang$core$Native_Utils.update(
+									_p60,
+									{drag: _elm_lang$core$Maybe$Nothing})),
+							_1: 0,
+							_2: model.field.blocks
+						};
+					} else {
+						var _p59 = _p57._0;
+						var _p58 = _zwilias$tenten$Main$removeFullLines(
+							A4(_zwilias$tenten$Matrix$overlayMaybe, blockMatrix, _p59.x, _p59.y, model.field.blocks));
+						var newFieldBlocks = _p58._0;
+						var scoreD = _p58._1;
+						return {
+							ctor: '_Tuple3',
+							_0: _elm_lang$core$Maybe$Nothing,
+							_1: scoreD + _zwilias$tenten$Main$valueOfMatrix(blockMatrix),
+							_2: newFieldBlocks
+						};
+					}
+				}();
+				var newBlock = _p56._0;
+				var scoreD = _p56._1;
+				var newFieldBlocks = _p56._2;
+				var newBlocks = function (oldBlocks) {
+					return A3(_zwilias$tenten$Main$replaceBlock, _p60, newBlock, oldBlocks);
+				};
+				var newField = function (field) {
+					return _elm_lang$core$Native_Utils.update(
+						field,
+						{blocks: newFieldBlocks});
+				};
+				return A2(
+					_NoRedInk$rocket_update$Rocket_ops['=>'],
+					_zwilias$tenten$Main$generateCandidates(
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{
+								next: newBlocks(model.next),
+								field: newField(model.field),
+								score: model.score + scoreD
+							})),
+					{ctor: '[]'});
+		}
+	});
+var _zwilias$tenten$Main$update = F2(
+	function (msg, model) {
+		var _p61 = msg;
+		switch (_p61.ctor) {
+			case 'DragAction':
+				return A2(_zwilias$tenten$Main$handleDragAction, _p61._0, model);
+			case 'MouseEnterField':
+				var setPosition = F2(
+					function (position, field) {
+						return _elm_lang$core$Native_Utils.update(
+							field,
+							{
+								mousePosition: _elm_lang$core$Maybe$Just(
+									{offSet: _p61._0, position: position})
+							});
+					});
+				return A2(
+					_NoRedInk$rocket_update$Rocket_ops['=>'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{
+							field: A2(setPosition, _p61._1, model.field)
+						}),
+					{ctor: '[]'});
+			default:
+				var unsetPosition = function (field) {
+					return _elm_lang$core$Native_Utils.update(
+						field,
+						{mousePosition: _elm_lang$core$Maybe$Nothing});
+				};
+				return A2(
+					_NoRedInk$rocket_update$Rocket_ops['=>'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{
+							field: unsetPosition(model.field)
+						}),
+					{ctor: '[]'});
+		}
+	});
+var _zwilias$tenten$Main$VerticalFlip = {ctor: 'VerticalFlip'};
+var _zwilias$tenten$Main$HorizontalFlip = {ctor: 'HorizontalFlip'};
+var _zwilias$tenten$Main$DragEnd = F2(
 	function (a, b) {
 		return {ctor: 'DragEnd', _0: a, _1: b};
 	});
-var _user$project$Main$DragAt = F2(
+var _zwilias$tenten$Main$DragAt = F2(
 	function (a, b) {
 		return {ctor: 'DragAt', _0: a, _1: b};
 	});
-var _user$project$Main$DragStart = F3(
+var _zwilias$tenten$Main$DragStart = F3(
 	function (a, b, c) {
 		return {ctor: 'DragStart', _0: a, _1: b, _2: c};
 	});
-var _user$project$Main$MouseLeaveField = {ctor: 'MouseLeaveField'};
-var _user$project$Main$registerMouseLeave = _elm_lang$core$Json_Decode$succeed(_user$project$Main$MouseLeaveField);
-var _user$project$Main$MouseEnterField = F2(
+var _zwilias$tenten$Main$MouseLeaveField = {ctor: 'MouseLeaveField'};
+var _zwilias$tenten$Main$registerMouseLeave = _elm_lang$core$Json_Decode$succeed(_zwilias$tenten$Main$MouseLeaveField);
+var _zwilias$tenten$Main$MouseEnterField = F2(
 	function (a, b) {
 		return {ctor: 'MouseEnterField', _0: a, _1: b};
 	});
-var _user$project$Main$registerMouseEnter = A3(_elm_lang$core$Json_Decode$map2, _user$project$Main$MouseEnterField, _user$project$Main$offsetPositionDecoder, _elm_lang$mouse$Mouse$position);
-var _user$project$Main$renderField = function (field) {
+var _zwilias$tenten$Main$registerMouseEnter = A3(_elm_lang$core$Json_Decode$map2, _zwilias$tenten$Main$MouseEnterField, _zwilias$tenten$Main$offsetPositionDecoder, _elm_lang$mouse$Mouse$position);
+var _zwilias$tenten$Main$renderField = function (field) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{
 			ctor: '::',
-			_0: _user$project$Main$class(
+			_0: _zwilias$tenten$Main$class(
 				{
 					ctor: '::',
-					_0: _user$project$Styles$Field,
+					_0: _zwilias$tenten$Styles$Field,
 					_1: {ctor: '[]'}
 				}),
 			_1: {
 				ctor: '::',
-				_0: A2(_elm_lang$html$Html_Events$on, 'mouseenter', _user$project$Main$registerMouseEnter),
+				_0: A2(_elm_lang$html$Html_Events$on, 'mouseenter', _zwilias$tenten$Main$registerMouseEnter),
 				_1: {
 					ctor: '::',
-					_0: A2(_elm_lang$html$Html_Events$on, 'mouseleave', _user$project$Main$registerMouseLeave),
+					_0: A2(_elm_lang$html$Html_Events$on, 'mouseleave', _zwilias$tenten$Main$registerMouseLeave),
 					_1: {ctor: '[]'}
 				}
 			}
 		},
 		A2(
 			_elm_lang$core$List$map,
-			_elm_lang$html$Html_Lazy$lazy(_user$project$Main$renderRow),
-			A2(
-				_user$project$Matrix$map,
-				_elm_lang$html$Html_Lazy$lazy(_user$project$Main$renderFieldBlock),
-				field.blocks)));
+			_elm_lang$html$Html_Lazy$lazy(_zwilias$tenten$Main$renderRow),
+			_zwilias$tenten$Matrix$toList(
+				A2(
+					_zwilias$tenten$Matrix$map,
+					_elm_lang$html$Html_Lazy$lazy(_zwilias$tenten$Main$renderFieldBlock),
+					field.blocks))));
 };
-var _user$project$Main$DragAction = function (a) {
+var _zwilias$tenten$Main$DragAction = function (a) {
 	return {ctor: 'DragAction', _0: a};
 };
-var _user$project$Main$subscriptions = function (model) {
-	var _p26 = A2(
-		_user$project$Main$findFirst,
+var _zwilias$tenten$Main$subscriptions = function (model) {
+	var _p62 = A2(
+		_zwilias$tenten$Main$findFirst,
 		function (block) {
 			return _elm_community$maybe_extra$Maybe_Extra$isJust(block.drag);
 		},
 		model.next);
-	if (_p26.ctor === 'Nothing') {
+	if (_p62.ctor === 'Nothing') {
 		return _elm_lang$core$Platform_Sub$none;
 	} else {
-		var _p27 = _p26._0;
+		var _p63 = _p62._0;
 		return _elm_lang$core$Platform_Sub$batch(
 			{
 				ctor: '::',
 				_0: A2(
 					_elm_lang$core$Platform_Sub$map,
-					_user$project$Main$DragAction,
+					_zwilias$tenten$Main$DragAction,
 					_elm_lang$mouse$Mouse$moves(
-						_user$project$Main$DragAt(_p27))),
+						_zwilias$tenten$Main$DragAt(_p63))),
 				_1: {
 					ctor: '::',
 					_0: A2(
 						_elm_lang$core$Platform_Sub$map,
-						_user$project$Main$DragAction,
+						_zwilias$tenten$Main$DragAction,
 						_elm_lang$mouse$Mouse$ups(
-							_user$project$Main$DragEnd(_p27))),
+							_zwilias$tenten$Main$DragEnd(_p63))),
 					_1: {ctor: '[]'}
 				}
 			});
 	}
 };
-var _user$project$Main$startDrag = function (block) {
+var _zwilias$tenten$Main$startDrag = function (block) {
 	return A2(
 		_elm_lang$core$Json_Decode$map,
-		_user$project$Main$DragAction,
+		_zwilias$tenten$Main$DragAction,
 		A3(
 			_elm_lang$core$Json_Decode$map2,
-			_user$project$Main$DragStart(block),
-			_user$project$Main$offsetPositionDecoder,
+			_zwilias$tenten$Main$DragStart(block),
+			_zwilias$tenten$Main$topLeft,
 			_elm_lang$mouse$Mouse$position));
 };
-var _user$project$Main$renderCandidate = function (block) {
-	var _p28 = block;
-	if (_p28.ctor === 'Nothing') {
+var _zwilias$tenten$Main$renderCandidate = function (block) {
+	var _p64 = block;
+	if (_p64.ctor === 'Nothing') {
 		return A2(
 			_elm_lang$html$Html$div,
 			{ctor: '[]'},
 			{ctor: '[]'});
 	} else {
-		var _p30 = _p28._0;
+		var _p66 = _p64._0;
 		var classes = function () {
-			var _p29 = _p30.drag;
-			if (_p29.ctor === 'Nothing') {
+			var _p65 = _p66.drag;
+			if (_p65.ctor === 'Nothing') {
 				return {
 					ctor: '::',
-					_0: _user$project$Styles$Candidate,
+					_0: _zwilias$tenten$Styles$Candidate,
 					_1: {ctor: '[]'}
 				};
 			} else {
 				return {
 					ctor: '::',
-					_0: _user$project$Styles$Candidate,
+					_0: _zwilias$tenten$Styles$Candidate,
 					_1: {
 						ctor: '::',
-						_0: _user$project$Styles$Dragging,
+						_0: _zwilias$tenten$Styles$Dragging,
 						_1: {ctor: '[]'}
 					}
 				};
@@ -15610,22 +16701,22 @@ var _user$project$Main$renderCandidate = function (block) {
 			_elm_lang$html$Html$div,
 			{
 				ctor: '::',
-				_0: _user$project$Main$class(classes),
+				_0: _zwilias$tenten$Main$class(classes),
 				_1: {
 					ctor: '::',
 					_0: A2(
 						_elm_lang$html$Html_Events$on,
 						'mousedown',
-						_user$project$Main$startDrag(_p30)),
+						_zwilias$tenten$Main$startDrag(_p66)),
 					_1: {
 						ctor: '::',
 						_0: _elm_lang$html$Html_Attributes$style(
 							{
 								ctor: '::',
-								_0: _user$project$Main$dragPosition(_p30),
+								_0: _zwilias$tenten$Main$dragPosition(_p66),
 								_1: {
 									ctor: '::',
-									_0: _user$project$Main$dragTransition(_p30),
+									_0: _zwilias$tenten$Main$dragTransition(_p66),
 									_1: {ctor: '[]'}
 								}
 							}),
@@ -15635,57 +16726,91 @@ var _user$project$Main$renderCandidate = function (block) {
 			},
 			A2(
 				_elm_lang$core$List$map,
-				_user$project$Main$renderRow,
-				A2(
-					_user$project$Matrix$map,
-					_user$project$Main$renderFieldBlock,
-					_user$project$Main$blockToMatrix(_p30))));
+				_zwilias$tenten$Main$renderRow,
+				_zwilias$tenten$Matrix$toList(
+					A2(
+						_zwilias$tenten$Matrix$map,
+						_zwilias$tenten$Main$renderFieldBlock,
+						_zwilias$tenten$Main$blockToMatrix(_p66)))));
 	}
 };
-var _user$project$Main$renderNext = function (blockList) {
+var _zwilias$tenten$Main$renderNext = function (blockList) {
 	return A2(
 		_elm_lang$html$Html$div,
-		{ctor: '[]'},
-		A2(_elm_lang$core$List$map, _user$project$Main$renderCandidate, blockList));
-};
-var _user$project$Main$view = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html$text('Score: '),
+			_0: _zwilias$tenten$Main$class(
+				{
+					ctor: '::',
+					_0: _zwilias$tenten$Styles$CandidateList,
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		A2(_elm_lang$core$List$map, _zwilias$tenten$Main$renderCandidate, blockList));
+};
+var _zwilias$tenten$Main$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _zwilias$tenten$Main$class(
+				{
+					ctor: '::',
+					_0: _zwilias$tenten$Styles$Wrapper,
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _zwilias$tenten$Main$class(
+						{
+							ctor: '::',
+							_0: _zwilias$tenten$Styles$Score,
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						_elm_lang$core$Basics$toString(model.score)),
+					_1: {ctor: '[]'}
+				}),
 			_1: {
 				ctor: '::',
-				_0: _elm_lang$html$Html$text(
-					_elm_lang$core$Basics$toString(model.score)),
+				_0: _zwilias$tenten$Main$renderField(model.field),
 				_1: {
 					ctor: '::',
-					_0: _user$project$Main$renderField(model.field),
-					_1: {
-						ctor: '::',
-						_0: _user$project$Main$renderNext(model.next),
-						_1: {ctor: '[]'}
-					}
+					_0: _zwilias$tenten$Main$renderNext(model.next),
+					_1: {ctor: '[]'}
 				}
 			}
 		});
 };
-var _user$project$Main$main = _elm_lang$html$Html$program(
+var _zwilias$tenten$Main$main = _elm_lang$html$Html$programWithFlags(
 	{
-		init: _user$project$Main$init,
-		view: _user$project$Main$view,
-		update: function (_p31) {
-			return _NoRedInk$rocket_update$Rocket$batchUpdate(
-				_user$project$Main$update(_p31));
+		init: function (_p67) {
+			return _NoRedInk$rocket_update$Rocket$batchInit(
+				_zwilias$tenten$Main$init(_p67));
 		},
-		subscriptions: _user$project$Main$subscriptions
-	})();
+		view: _zwilias$tenten$Main$view,
+		update: function (_p68) {
+			return _NoRedInk$rocket_update$Rocket$batchUpdate(
+				_zwilias$tenten$Main$update(_p68));
+		},
+		subscriptions: _zwilias$tenten$Main$subscriptions
+	})(_elm_lang$core$Json_Decode$int);
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
-if (typeof _user$project$Main$main !== 'undefined') {
-    _user$project$Main$main(Elm['Main'], 'Main', undefined);
+if (typeof _zwilias$tenten$Main$main !== 'undefined') {
+    _zwilias$tenten$Main$main(Elm['Main'], 'Main', undefined);
 }
 
 if (typeof define === "function" && define['amd'])

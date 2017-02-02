@@ -1,2 +1,5 @@
 node_modules
 elm-stuff
+.doit.db
+tests/elm-stuff
+docs

@@ -2,10 +2,27 @@
     display: flex;
 }
 
+.tentenScore {
+    font-size: 2em;
+    text-align: center;
+    font-family: Luckiest Guy;
+}
+
+.tentenWrapper {
+    margin: 0px auto;
+    width: 440px;
+}
+
+.tentenCandidateList {
+    display: flex;
+    justify-content: space-between;
+}
+
 .tentenFieldBlock {
     border-radius: 5px;
     width: 40px;
     height: 40px;
+    border: 1px solid transparent;
     margin: 1px;
 }
 
@@ -19,8 +36,53 @@
 }
 
 .tentenFilledBlock {
-    background-color: #FF8271;
-    border: 1px solid #FF8271;
+    background-color: #333333;
+    border: 1px solid #333333;
+}
+
+.tentenBigL {
+    background-color: #FFC658;
+    border: 1px solid #FFC658;
+}
+
+.tentenSmallL {
+    background-color: #50B5D5;
+    border: 1px solid #50B5D5;
+}
+
+.tentenDot {
+    background-color: #5D6EB9;
+    border: 1px solid #5D6EB9;
+}
+
+.tentenBigBox {
+    background-color: #B3FE6A;
+    border: 1px solid #B3FE6A;
+}
+
+.tentenSmallBox {
+    background-color: #E47D50;
+    border: 1px solid #E47D50;
+}
+
+.tentenDash {
+    background-color: #98DC55;
+    border: 1px solid #98DC55;
+}
+
+.tentenLongDash {
+    background-color: #7E8ED5;
+    border: 1px solid #7E8ED5;
+}
+
+.tentenLongerDash {
+    background-color: #448FC4;
+    border: 1px solid #448FC4;
+}
+
+.tentenLongestDash {
+    background-color: #ED954A;
+    border: 1px solid #ED954A;
 }
 
 .tentenCandidate {

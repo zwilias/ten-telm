@@ -1,5 +1,10 @@
 module Main exposing (main)
 
+{-| The actual app.
+
+@docs main
+-}
+
 import Html exposing (Html, text, body, div)
 import Html.CssHelpers
 import Html.Events exposing (on)
@@ -7,23 +12,34 @@ import Html.Attributes exposing (style)
 import Html.Lazy exposing (lazy)
 import Rocket exposing ((=>))
 import Matrix exposing (Matrix)
-import Random
+import Random.Pcg as Random
 import Styles
 import Maybe.Extra
 import Array exposing (Array)
 import Mouse exposing (Position)
 import Json.Decode as Decode
 import Debug
+import DOM
 
 
-main : Program Never Model Msg
+{-| main app.
+-}
+main : Program Flags Model Msg
 main =
-    Html.program
-        { init = init
+    Html.programWithFlags
+        { init = init >> Rocket.batchInit
         , view = view
         , update = update >> Rocket.batchUpdate
         , subscriptions = subscriptions
         }
+
+
+
+-- Config
+
+
+( fieldWidth, fieldHeight, candidates ) =
+    ( 10, 10, 3 )
 
 
 
@@ -49,6 +65,173 @@ log string logMe =
 -- Model
 
 
+type alias Flags =
+    Int
+
+
+type alias Model =
+    { score : Int
+    , field : Field
+    , seed : Random.Seed
+    , next : List (Maybe Block)
+    }
+
+
+init : Flags -> ( Model, List (Cmd Msg) )
+init flags =
+    { score = 0
+    , field = emptyField fieldWidth fieldHeight
+    , seed = Random.initialSeed flags
+    , next = []
+    }
+        |> generateCandidates
+        => []
+
+
+possibleTransformations : BlockType -> Int
+possibleTransformations blockType =
+    case blockType of
+        Dot ->
+            0
+
+        SmallL ->
+            3
+
+        BigL ->
+            3
+
+        SmallBox ->
+            0
+
+        BigBox ->
+            0
+
+        Dash ->
+            1
+
+        LongDash ->
+            1
+
+        LongerDash ->
+            1
+
+        LongestDash ->
+            1
+
+
+generateCandidate : Random.Seed -> ( Block, Random.Seed )
+generateCandidate seed =
+    let
+        possibleTypes : List BlockType
+        possibleTypes =
+            [ BigL
+            , SmallL
+            , BigBox
+            , SmallBox
+            , Dot
+            , Dash
+            , LongDash
+            , LongerDash
+            , LongestDash
+            ]
+
+        intGen : Random.Generator Int
+        intGen =
+            Random.int 0 <| List.length possibleTypes - 1
+
+        ( randomNumber, nextSeed ) =
+            Random.step intGen seed
+    in
+        let
+            blockType =
+                case randomNumber of
+                    0 ->
+                        BigL
+
+                    1 ->
+                        SmallL
+
+                    2 ->
+                        BigBox
+
+                    3 ->
+                        SmallBox
+
+                    4 ->
+                        Dot
+
+                    5 ->
+                        Dash
+
+                    6 ->
+                        LongDash
+
+                    7 ->
+                        LongerDash
+
+                    8 ->
+                        LongestDash
+
+                    _ ->
+                        Debug.crash "Nein."
+        in
+            createBlock blockType seed
+                |> (\block -> ( block, nextSeed ))
+                |> addTransformations
+
+
+addTransformations : ( Block, Random.Seed ) -> ( Block, Random.Seed )
+addTransformations ( block, seedRandom ) =
+    let
+        numberAllowed : Int
+        numberAllowed =
+            possibleTransformations block.blockType
+
+        intGen : Random.Generator Int
+        intGen =
+            Random.int 0 numberAllowed
+
+        ( transformations, newSeed ) =
+            case numberAllowed of
+                0 ->
+                    ( 0, seedRandom )
+
+                _ ->
+                    Random.step intGen seedRandom
+    in
+        ( { block
+            | transformations = transformations
+          }
+        , newSeed
+        )
+
+
+generateCandidates : Model -> Model
+generateCandidates model =
+    let
+        ( newCandidates, newSeed ) =
+            List.range 1 candidates
+                |> List.foldl
+                    (\_ ( candidateList, seed ) ->
+                        let
+                            ( newCandidate, newSeed ) =
+                                generateCandidate seed
+                        in
+                            ( Just newCandidate :: candidateList, newSeed )
+                    )
+                    ( [], model.seed )
+    in
+        case log "next" <| List.filter Maybe.Extra.isJust model.next of
+            [] ->
+                { model
+                    | seed = newSeed
+                    , next = newCandidates
+                }
+
+            _ ->
+                model
+
+
 type BlockType
     = BigL
     | SmallL
@@ -59,19 +242,40 @@ type BlockType
     | LongDash
     | LongerDash
     | LongestDash
-    | Pyramid
 
 
 type alias Block =
     { blockType : BlockType
     , drag : Maybe Drag
+    , seed : Random.Seed
+    , transformations : Int
     }
+
+
+createBlock : BlockType -> Random.Seed -> Block
+createBlock blockType seedRandom =
+    Block blockType Nothing seedRandom 0
+
+
+type Transformation
+    = HorizontalFlip
+    | VerticalFlip
 
 
 type alias Drag =
     { start : Position
     , current : Position
-    , offSet : Position
+    , topLeftPos : Position
+    }
+
+
+type alias FieldLocation =
+    { position : Position, offSet : Position }
+
+
+type alias Field =
+    { blocks : Matrix (Maybe BlockType)
+    , mousePosition : Maybe FieldLocation
     }
 
 
@@ -103,49 +307,113 @@ shapeToMatrixInitializer blockType shapeAsLists x y =
 
 blockToMatrix : Block -> Matrix (Maybe BlockType)
 blockToMatrix block =
-    case block.blockType of
-        BigL ->
-            Matrix.create
-                3
-                3
-                (shapeToMatrixInitializer
-                    BigL
-                    [ [ True, True, True ]
-                    , [ True, False, False ]
-                    , [ True, False, False ]
-                    ]
-                )
+    let
+        myMatrix : Matrix (Maybe BlockType)
+        myMatrix =
+            case block.blockType of
+                BigL ->
+                    Matrix.create
+                        3
+                        3
+                        (shapeToMatrixInitializer
+                            BigL
+                            [ [ True, True, True ]
+                            , [ True, False, False ]
+                            , [ True, False, False ]
+                            ]
+                        )
 
-        Pyramid ->
-            Matrix.create 3
-                2
-                (shapeToMatrixInitializer
-                    Pyramid
-                    [ [ False, True, False ]
-                    , [ True, True, True ]
-                    ]
-                )
+                LongestDash ->
+                    Matrix.create
+                        5
+                        1
+                        (shapeToMatrixInitializer
+                            LongestDash
+                            [ List.repeat 5 True ]
+                        )
 
-        LongestDash ->
-            Matrix.create 5
-                1
-                (shapeToMatrixInitializer
-                    LongestDash
-                    [ [ True, True, True, True, True ] ]
-                )
+                SmallL ->
+                    Matrix.create
+                        2
+                        2
+                        (shapeToMatrixInitializer
+                            SmallL
+                            [ [ True, False ]
+                            , [ True, True ]
+                            ]
+                        )
+
+                BigBox ->
+                    Matrix.create
+                        3
+                        3
+                        (shapeToMatrixInitializer
+                            BigBox
+                            (List.repeat 3 True
+                                |> List.repeat 3
+                            )
+                        )
+
+                SmallBox ->
+                    Matrix.create
+                        2
+                        2
+                        (shapeToMatrixInitializer
+                            SmallBox
+                            (List.repeat 2 True
+                                |> List.repeat 2
+                            )
+                        )
+
+                Dot ->
+                    Matrix.create
+                        1
+                        1
+                        (shapeToMatrixInitializer
+                            Dot
+                            [ [ True ] ]
+                        )
+
+                Dash ->
+                    Matrix.create
+                        2
+                        1
+                        (shapeToMatrixInitializer
+                            Dash
+                            [ List.repeat 2 True ]
+                        )
+
+                LongDash ->
+                    Matrix.create
+                        3
+                        1
+                        (shapeToMatrixInitializer
+                            LongDash
+                            [ List.repeat 3 True ]
+                        )
+
+                LongerDash ->
+                    Matrix.create
+                        4
+                        1
+                        (shapeToMatrixInitializer
+                            LongerDash
+                            [ List.repeat 4 True ]
+                        )
+    in
+        applyTransformation block.transformations myMatrix
+
+
+applyTransformation : Int -> Matrix a -> Matrix a
+applyTransformation times matrix =
+    case times of
+        0 ->
+            matrix
 
         _ ->
-            Matrix.empty
-
-
-type alias FieldLocation =
-    { position : Position, offSet : Position }
-
-
-type alias Field =
-    { blocks : Matrix (Maybe BlockType)
-    , mousePosition : Maybe FieldLocation
-    }
+            matrix
+                |> Matrix.rotate
+                |> applyTransformation (times - 1)
 
 
 getFieldPosition : FieldLocation -> Position
@@ -154,8 +422,9 @@ getFieldPosition { position, offSet } =
 
 
 getTopLeft : Drag -> Position
-getTopLeft { current, offSet, start } =
-    getDelta current offSet
+getTopLeft { current, topLeftPos, start } =
+    getDelta start current
+        |> getDelta topLeftPos
         |> log "topleft"
 
 
@@ -169,29 +438,6 @@ getDelta from to =
 emptyField : Int -> Int -> Field
 emptyField width height =
     Field (Matrix.create width height (always <| always Nothing)) Nothing
-
-
-type alias Model =
-    { score : Int
-    , field : Field
-    , seed : Random.Seed
-    , next : List (Maybe Block)
-    }
-
-
-init : ( Model, Cmd Msg )
-init =
-    ( { score = 0
-      , field = emptyField 10 10
-      , seed = Random.initialSeed 227852860
-      , next =
-            [ Just <| Block BigL Nothing
-            , Just <| Block Pyramid Nothing
-            , Just <| Block LongestDash Nothing
-            ]
-      }
-    , Cmd.none
-    )
 
 
 
@@ -212,7 +458,7 @@ type Msg
 
 update : Msg -> Model -> ( Model, List (Cmd Msg) )
 update msg model =
-    case log "message" msg of
+    case msg of
         DragAction dragMsg ->
             handleDragAction dragMsg model
 
@@ -244,14 +490,17 @@ update msg model =
 handleDragAction : DragMsg -> Model -> ( Model, List (Cmd Msg) )
 handleDragAction dragMsg model =
     case dragMsg of
-        DragStart block offSet position ->
+        DragStart block topLeftPos position ->
             let
                 newBlocks =
                     replaceBlock
                         block
-                        { block
-                            | drag = Just <| Drag position position offSet
-                        }
+                        (Just
+                            { block
+                                | drag = Just <| Drag position position topLeftPos
+                            }
+                            |> log "registerest drag start"
+                        )
                         model.next
             in
                 { model
@@ -273,7 +522,7 @@ handleDragAction dragMsg model =
                 newBlocks =
                     replaceBlock
                         block
-                        { block | drag = updateDrag block.drag }
+                        (Just { block | drag = updateDrag block.drag })
                         model.next
             in
                 { model
@@ -283,36 +532,208 @@ handleDragAction dragMsg model =
 
         DragEnd block position ->
             let
-                getOffsetLocation :
-                    Maybe Drag
-                    -> Maybe FieldLocation
-                    -> Maybe Position
-                getOffsetLocation drag fieldLocation =
-                    let
-                        dragPosition =
-                            Maybe.map getTopLeft drag
+                blockMatrix : Matrix (Maybe BlockType)
+                blockMatrix =
+                    blockToMatrix block
 
-                        fieldPosition =
-                            Maybe.map getFieldPosition fieldLocation
-                    in
-                        Maybe.map2 getDelta dragPosition fieldPosition
+                ( newBlock, scoreD, newFieldBlocks ) =
+                    case dropLocation block model.field of
+                        Nothing ->
+                            ( (Just { block | drag = Nothing }), 0, model.field.blocks )
 
-                _ =
-                    log "localized delta = " <|
-                        getOffsetLocation
-                            block.drag
-                            model.field.mousePosition
+                        Just location ->
+                            let
+                                ( newFieldBlocks, scoreD ) =
+                                    (Matrix.overlayMaybe blockMatrix location.x location.y model.field.blocks)
+                                        |> removeFullLines
+                            in
+                                ( Nothing
+                                , scoreD + valueOfMatrix blockMatrix
+                                , newFieldBlocks
+                                )
 
-                newBlocks =
+                newBlocks : List (Maybe Block) -> List (Maybe Block)
+                newBlocks oldBlocks =
                     replaceBlock
                         block
-                        { block | drag = Nothing }
-                        model.next
+                        newBlock
+                        oldBlocks
+
+                newField : Field -> Field
+                newField field =
+                    { field | blocks = newFieldBlocks }
             in
-                { model | next = newBlocks } => []
+                { model
+                    | next = newBlocks model.next
+                    , field = newField model.field
+                    , score = model.score + scoreD
+                }
+                    |> generateCandidates
+                    => []
 
 
-replaceBlock : Block -> Block -> List (Maybe Block) -> List (Maybe Block)
+removeFullLines : Matrix (Maybe a) -> ( Matrix (Maybe a), Int )
+removeFullLines matrix =
+    let
+        arrayAll : (z -> Bool) -> Array z -> Bool
+        arrayAll op array =
+            array |> Array.toList |> List.all op
+
+        isRowDone : Array (Maybe z) -> Bool
+        isRowDone row =
+            log "row done" <| arrayAll Maybe.Extra.isJust row
+
+        handleRow : Array (Maybe z) -> ( Array (Maybe z), Int )
+        handleRow array =
+            if isRowDone array == True then
+                ( Array.map (always Nothing) array, Array.length array )
+            else
+                ( array, 0 )
+
+        handleRows : ( Matrix (Maybe z), Int ) -> ( Matrix (Maybe z), Int )
+        handleRows ( matrix, initialScore ) =
+            matrix
+                |> Array.map handleRow
+                |> Array.toList
+                |> List.unzip
+                |> Tuple.mapFirst Array.fromList
+                |> Tuple.mapSecond List.sum
+                |> Tuple.mapSecond (\score -> score + initialScore)
+
+        handleColumns : ( Matrix (Maybe z), Int ) -> ( Matrix (Maybe z), Int )
+        handleColumns ( matrix, initialScore ) =
+            matrix
+                |> Matrix.transpose
+                |> flip (,) initialScore
+                |> handleRows
+                |> Tuple.mapFirst Matrix.transpose
+    in
+        matrix
+            |> flip (,) 0
+            |> handleRows
+            |> handleColumns
+
+
+dropLocation : Block -> Field -> Maybe Position
+dropLocation block field =
+    let
+        getOffsetLocation :
+            Maybe Drag
+            -> Maybe FieldLocation
+            -> Maybe Position
+        getOffsetLocation drag fieldLocation =
+            let
+                dragPosition =
+                    Maybe.map getTopLeft drag
+
+                fieldPosition =
+                    Maybe.map getFieldPosition fieldLocation
+            in
+                Maybe.map2 getDelta dragPosition fieldPosition
+
+        localizedDelta =
+            getOffsetLocation
+                block.drag
+                field.mousePosition
+
+        blockMatrix : Matrix (Maybe BlockType)
+        blockMatrix =
+            blockToMatrix block
+
+        size : Matrix.Dimension
+        size =
+            Matrix.dimension blockMatrix
+
+        nearestLocation =
+            Maybe.map positionToNearestLocation localizedDelta
+                |> log "nearest location"
+    in
+        Maybe.Extra.filter
+            (positionInBounds
+                (fieldWidth - size.width)
+                (fieldHeight - size.height)
+            )
+            nearestLocation
+            |> log "is in bounds"
+            |> Maybe.Extra.filter
+                (\location ->
+                    isUnoccupied field.blocks blockMatrix location
+                )
+            |> log "is unoccupied"
+
+
+listsToPairs : List a -> List b -> List ( a, b )
+listsToPairs firstList secondList =
+    List.concatMap
+        (\f ->
+            List.map (\s -> ( f, s )) secondList
+        )
+        firstList
+
+
+isUnoccupied : Matrix (Maybe a) -> Matrix (Maybe a) -> Position -> Bool
+isUnoccupied baseMatrix overlay offSet =
+    let
+        { width, height } =
+            Matrix.dimension overlay
+                |> log "dims"
+    in
+        listsToPairs
+            (List.range 0 (width - 1))
+            (List.range 0 (height - 1))
+            |> log "checking ranges..."
+            |> List.all
+                (\( x, y ) ->
+                    (Maybe.Extra.isNothing
+                        (Matrix.get y x overlay |> Maybe.Extra.join)
+                    )
+                        || (Maybe.Extra.isNothing
+                                (Matrix.get (y + offSet.y) (x + offSet.x) baseMatrix |> Maybe.Extra.join)
+                           )
+                        |> log ("isNothing at " ++ toString x ++ ", " ++ toString y)
+                )
+
+
+valueOfMatrix : Matrix (Maybe a) -> Int
+valueOfMatrix aMatrix =
+    Matrix.foldl
+        (\val ->
+            (+) <|
+                case val of
+                    Nothing ->
+                        0
+
+                    Just _ ->
+                        1
+        )
+        0
+        aMatrix
+
+
+inBounds : Int -> Int -> Int -> Bool
+inBounds lower upper number =
+    number >= lower && number <= upper
+
+
+positionInBounds : Int -> Int -> Position -> Bool
+positionInBounds width height { x, y } =
+    inBounds 0 width x && inBounds 0 height y
+
+
+nearestMultiplier : Int -> Int -> Int
+nearestMultiplier multiple number =
+    (number + multiple // 2) // multiple
+
+
+positionToNearestLocation : Position -> Position
+positionToNearestLocation position =
+    { position
+        | x = nearestMultiplier 44 position.x
+        , y = nearestMultiplier 44 position.y
+    }
+
+
+replaceBlock : Block -> Maybe Block -> List (Maybe Block) -> List (Maybe Block)
 replaceBlock oldBlock newBlock blockList =
     let
         replacer : Maybe Block -> Maybe Block
@@ -323,7 +744,7 @@ replaceBlock oldBlock newBlock blockList =
 
                 Just possibleBlock ->
                     if possibleBlock == oldBlock then
-                        Just newBlock
+                        newBlock
                     else
                         Just possibleBlock
     in
@@ -372,9 +793,8 @@ subscriptions model =
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ text "Score: "
-        , text <| toString model.score
+    div [ class [ Styles.Wrapper ] ]
+        [ div [ class [ Styles.Score ] ] [ text <| toString model.score ]
         , renderField model.field
         , renderNext model.next
         ]
@@ -386,7 +806,7 @@ view model =
 
 renderNext : List (Maybe Block) -> Html Msg
 renderNext blockList =
-    div [] <| List.map renderCandidate blockList
+    div [ class [ Styles.CandidateList ] ] <| List.map renderCandidate blockList
 
 
 renderCandidate : Maybe Block -> Html Msg
@@ -411,6 +831,7 @@ renderCandidate block =
                     , style [ dragPosition aBlock, dragTransition aBlock ]
                     ]
                     (Matrix.map renderFieldBlock (blockToMatrix aBlock)
+                        |> Matrix.toList
                         |> List.map renderRow
                     )
 
@@ -450,6 +871,7 @@ renderField field =
         , on "mouseleave" registerMouseLeave
         ]
         (Matrix.map (lazy renderFieldBlock) field.blocks
+            |> Matrix.toList
             |> List.map (lazy renderRow)
         )
 
@@ -468,10 +890,40 @@ renderFieldBlock fieldBlock =
                 Nothing ->
                     Styles.EmptyBlock
 
-                _ ->
-                    Styles.FilledBlock
+                Just aType ->
+                    case aType of
+                        Dot ->
+                            Styles.Dot
+
+                        SmallBox ->
+                            Styles.SmallBox
+
+                        BigBox ->
+                            Styles.BigBox
+
+                        SmallL ->
+                            Styles.SmallL
+
+                        BigL ->
+                            Styles.BigL
+
+                        Dash ->
+                            Styles.Dash
+
+                        LongDash ->
+                            Styles.LongDash
+
+                        LongerDash ->
+                            Styles.LongerDash
+
+                        LongestDash ->
+                            Styles.LongestDash
     in
         div [ class [ Styles.FieldBlock, blockTypeToClass fieldBlock ] ] []
+
+
+
+-- Event Decoders
 
 
 offsetPositionDecoder : Decode.Decoder Position
@@ -496,6 +948,23 @@ registerMouseEnter =
 startDrag : Block -> Decode.Decoder Msg
 startDrag block =
     Decode.map2 (DragStart block)
-        offsetPositionDecoder
+        topLeft
         Mouse.position
         |> Decode.map DragAction
+
+
+topLeft : Decode.Decoder Position
+topLeft =
+    Decode.map2 (,)
+        DOM.offsetLeft
+        DOM.offsetTop
+        |> currentTarget
+        |> Decode.andThen
+            (\( x, y ) ->
+                Decode.succeed <| Position (round x) (round y)
+            )
+
+
+currentTarget : Decode.Decoder a -> Decode.Decoder a
+currentTarget decoder =
+    Decode.field "currentTarget" decoder
