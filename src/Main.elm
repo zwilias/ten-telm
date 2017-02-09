@@ -15,11 +15,20 @@ import Matrix exposing (Matrix)
 import Random.Pcg as Random
 import Styles
 import Maybe.Extra
-import Array exposing (Array)
 import Mouse exposing (Position)
 import Json.Decode as Decode
 import Debug
 import DOM
+import Block
+    exposing
+        ( BlockType
+        , Block
+        , blockTypeToClass
+        , blockToMatrix
+        , generateCandidate
+        )
+import MouseMovement exposing (Drag)
+import Matrix.Helpers exposing (..)
 
 
 {-| main app.
@@ -95,124 +104,6 @@ init flags =
         => []
 
 
-possibleTransformations : BlockType -> Int
-possibleTransformations blockType =
-    case blockType of
-        Dot ->
-            0
-
-        SmallL ->
-            3
-
-        BigL ->
-            3
-
-        SmallBox ->
-            0
-
-        BigBox ->
-            0
-
-        Dash ->
-            1
-
-        LongDash ->
-            1
-
-        LongerDash ->
-            1
-
-        LongestDash ->
-            1
-
-
-generateCandidate : Random.Seed -> ( Block, Random.Seed )
-generateCandidate seed =
-    let
-        possibleTypes : List BlockType
-        possibleTypes =
-            [ BigL
-            , SmallL
-            , BigBox
-            , SmallBox
-            , Dot
-            , Dash
-            , LongDash
-            , LongerDash
-            , LongestDash
-            ]
-
-        intGen : Random.Generator Int
-        intGen =
-            Random.int 0 <| List.length possibleTypes - 1
-
-        ( randomNumber, nextSeed ) =
-            Random.step intGen seed
-    in
-        let
-            blockType =
-                case randomNumber of
-                    0 ->
-                        BigL
-
-                    1 ->
-                        SmallL
-
-                    2 ->
-                        BigBox
-
-                    3 ->
-                        SmallBox
-
-                    4 ->
-                        Dot
-
-                    5 ->
-                        Dash
-
-                    6 ->
-                        LongDash
-
-                    7 ->
-                        LongerDash
-
-                    8 ->
-                        LongestDash
-
-                    _ ->
-                        Debug.crash "Nein."
-        in
-            createBlock blockType seed
-                |> (\block -> ( block, nextSeed ))
-                |> addTransformations
-
-
-addTransformations : ( Block, Random.Seed ) -> ( Block, Random.Seed )
-addTransformations ( block, seedRandom ) =
-    let
-        numberAllowed : Int
-        numberAllowed =
-            possibleTransformations block.blockType
-
-        intGen : Random.Generator Int
-        intGen =
-            Random.int 0 numberAllowed
-
-        ( transformations, newSeed ) =
-            case numberAllowed of
-                0 ->
-                    ( 0, seedRandom )
-
-                _ ->
-                    Random.step intGen seedRandom
-    in
-        ( { block
-            | transformations = transformations
-          }
-        , newSeed
-        )
-
-
 generateCandidates : Model -> Model
 generateCandidates model =
     let
@@ -239,43 +130,6 @@ generateCandidates model =
                 model
 
 
-type BlockType
-    = BigL
-    | SmallL
-    | BigBox
-    | SmallBox
-    | Dot
-    | Dash
-    | LongDash
-    | LongerDash
-    | LongestDash
-
-
-type alias Block =
-    { blockType : BlockType
-    , drag : Maybe Drag
-    , seed : Random.Seed
-    , transformations : Int
-    }
-
-
-createBlock : BlockType -> Random.Seed -> Block
-createBlock blockType seedRandom =
-    Block blockType Nothing seedRandom 0
-
-
-type Transformation
-    = HorizontalFlip
-    | VerticalFlip
-
-
-type alias Drag =
-    { start : Position
-    , current : Position
-    , topLeftPos : Position
-    }
-
-
 type alias FieldLocation =
     { position : Position, offSet : Position }
 
@@ -284,97 +138,6 @@ type alias Field =
     { blocks : Matrix (Maybe BlockType)
     , mousePosition : Maybe FieldLocation
     }
-
-
-shapeToMatrixInitializer :
-    BlockType
-    -> List (List Bool)
-    -> Int
-    -> Int
-    -> Maybe BlockType
-shapeToMatrixInitializer blockType shapeAsLists x y =
-    let
-        shape =
-            shapeAsLists
-                |> List.map Array.fromList
-                |> Array.fromList
-    in
-        Array.get y shape
-            |> Maybe.map (\row -> Array.get x row)
-            |> Maybe.Extra.join
-            |> Maybe.map
-                (\x ->
-                    if x == True then
-                        Just blockType
-                    else
-                        Nothing
-                )
-            |> Maybe.Extra.join
-
-
-blockToMatrix : Block -> Matrix (Maybe BlockType)
-blockToMatrix block =
-    let
-        myMatrix : Matrix (Maybe BlockType)
-        myMatrix =
-            case block.blockType of
-                BigL ->
-                    Matrix.create
-                        3
-                        3
-                        (shapeToMatrixInitializer
-                            BigL
-                            [ [ True, True, True ]
-                            , [ True, False, False ]
-                            , [ True, False, False ]
-                            ]
-                        )
-
-                SmallL ->
-                    Matrix.create
-                        2
-                        2
-                        (shapeToMatrixInitializer
-                            SmallL
-                            [ [ True, False ]
-                            , [ True, True ]
-                            ]
-                        )
-
-                BigBox ->
-                    Matrix.constant 3 3 <| Just BigBox
-
-                SmallBox ->
-                    Matrix.constant 2 2 <| Just SmallBox
-
-                Dot ->
-                    Matrix.constant 1 1 <| Just Dot
-
-                Dash ->
-                    Matrix.constant 2 1 <| Just Dash
-
-                LongDash ->
-                    Matrix.constant 3 1 <| Just LongDash
-
-                LongerDash ->
-                    Matrix.constant 4 1 <| Just LongerDash
-
-                LongestDash ->
-                    Matrix.constant 5 1 <| Just LongestDash
-    in
-        applyTransformation block.transformations myMatrix
-
-
-applyTransformation : Int -> Matrix a -> Matrix a
-applyTransformation times matrix =
-    case times of
-        0 ->
-            matrix
-
-        _ ->
-            matrix
-                |> Matrix.rotate
-                |> applyTransformation (times - 1)
 
 
 getFieldPosition : FieldLocation -> Position
@@ -529,48 +292,6 @@ handleDragAction dragMsg model =
                     => []
 
 
-removeFullLines : Matrix (Maybe a) -> ( Matrix (Maybe a), Int )
-removeFullLines matrix =
-    let
-        arrayAll : (z -> Bool) -> Array z -> Bool
-        arrayAll op array =
-            array |> Array.toList |> List.all op
-
-        isRowDone : Array (Maybe z) -> Bool
-        isRowDone row =
-            log "row done" <| arrayAll Maybe.Extra.isJust row
-
-        handleRow : Array (Maybe z) -> ( Array (Maybe z), Int )
-        handleRow array =
-            if isRowDone array == True then
-                ( Array.map (always Nothing) array, Array.length array )
-            else
-                ( array, 0 )
-
-        handleRows : ( Matrix (Maybe z), Int ) -> ( Matrix (Maybe z), Int )
-        handleRows ( matrix, initialScore ) =
-            matrix
-                |> Array.map handleRow
-                |> Array.toList
-                |> List.unzip
-                |> Tuple.mapFirst Array.fromList
-                |> Tuple.mapSecond List.sum
-                |> Tuple.mapSecond (\score -> score + initialScore)
-
-        handleColumns : ( Matrix (Maybe z), Int ) -> ( Matrix (Maybe z), Int )
-        handleColumns ( matrix, initialScore ) =
-            matrix
-                |> Matrix.transpose
-                |> flip (,) initialScore
-                |> handleRows
-                |> Tuple.mapFirst Matrix.transpose
-    in
-        matrix
-            |> flip (,) 0
-            |> handleRows
-            |> handleColumns
-
-
 dropLocation : Block -> Field -> Maybe Position
 dropLocation block field =
     let
@@ -619,20 +340,6 @@ dropLocation block field =
             |> log "is unoccupied"
 
 
-listsToPairs : List a -> List b -> List ( a, b )
-listsToPairs firstList secondList =
-    List.concatMap
-        (\f ->
-            List.map (\s -> ( f, s )) secondList
-        )
-        firstList
-
-
-pairToPosition : ( Int, Int ) -> Position
-pairToPosition ( x, y ) =
-    { x = x, y = y }
-
-
 updateGamePhase : Model -> Model
 updateGamePhase model =
     let
@@ -650,67 +357,6 @@ updateGamePhase model =
             False ->
                 { model | phase = GameOver }
                     |> log "no moves left, game over!"
-
-
-canFitAnywhere : Matrix (Maybe a) -> Matrix (Maybe a) -> Bool
-canFitAnywhere baseMatrix overlay =
-    let
-        baseDims : Matrix.Dimension
-        baseDims =
-            Matrix.dimension baseMatrix
-
-        overlayDims : Matrix.Dimension
-        overlayDims =
-            Matrix.dimension overlay
-
-        occupationPredicate : Position -> Bool
-        occupationPredicate =
-            isUnoccupied baseMatrix overlay
-    in
-        listsToPairs
-            (List.range 0 <| baseDims.width - overlayDims.width)
-            (List.range 0 <| baseDims.height - overlayDims.height)
-            |> List.map pairToPosition
-            |> List.any occupationPredicate
-
-
-isUnoccupied : Matrix (Maybe a) -> Matrix (Maybe a) -> Position -> Bool
-isUnoccupied baseMatrix overlay offSet =
-    let
-        { width, height } =
-            Matrix.dimension overlay
-                |> log "dims"
-    in
-        listsToPairs
-            (List.range 0 (width - 1))
-            (List.range 0 (height - 1))
-            |> log "checking ranges..."
-            |> List.all
-                (\( x, y ) ->
-                    (Maybe.Extra.isNothing
-                        (Matrix.get y x overlay |> Maybe.Extra.join)
-                    )
-                        || (Maybe.Extra.isNothing
-                                (Matrix.get (y + offSet.y) (x + offSet.x) baseMatrix |> Maybe.Extra.join)
-                           )
-                        |> log ("isNothing at " ++ toString x ++ ", " ++ toString y)
-                )
-
-
-valueOfMatrix : Matrix (Maybe a) -> Int
-valueOfMatrix aMatrix =
-    Matrix.foldl
-        (\val ->
-            (+) <|
-                case val of
-                    Nothing ->
-                        0
-
-                    Just _ ->
-                        1
-        )
-        0
-        aMatrix
 
 
 inBounds : Int -> Int -> Int -> Bool
@@ -902,43 +548,7 @@ renderRow fieldRow =
 
 renderFieldBlock : Maybe BlockType -> Html Msg
 renderFieldBlock fieldBlock =
-    let
-        blockTypeToClass : Maybe BlockType -> Styles.CssClass
-        blockTypeToClass blockType =
-            case blockType of
-                Nothing ->
-                    Styles.EmptyBlock
-
-                Just aType ->
-                    case aType of
-                        Dot ->
-                            Styles.Dot
-
-                        SmallBox ->
-                            Styles.SmallBox
-
-                        BigBox ->
-                            Styles.BigBox
-
-                        SmallL ->
-                            Styles.SmallL
-
-                        BigL ->
-                            Styles.BigL
-
-                        Dash ->
-                            Styles.Dash
-
-                        LongDash ->
-                            Styles.LongDash
-
-                        LongerDash ->
-                            Styles.LongerDash
-
-                        LongestDash ->
-                            Styles.LongestDash
-    in
-        div [ class [ Styles.FieldBlock, blockTypeToClass fieldBlock ] ] []
+    div [ class [ Styles.FieldBlock, blockTypeToClass fieldBlock ] ] []
 
 
 

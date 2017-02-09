@@ -380,6 +380,17 @@ map operator matrix =
 
 
 {-| Fold over the values.
+
+```
+aMatrix : Matrix Int
+aMatrix =
+    Matrix.constant 3 2 1
+
+
+aMatrix
+    |> Matrix.foldl ((::)) []
+    == [ 1, 2, 3, 4, 5, 6 ]
+```
 -}
 foldl : (a -> b -> b) -> b -> Matrix a -> b
 foldl accumulator initial matrix =
